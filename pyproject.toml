@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "labor_model"
+version = "0.1.0"
+description = ""
+authors = ["Arnas Stonkus <ast@infrahub.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+mesa = "^2.1.4"
+scipy = "^1.13.0"
+
+
+[tool.poetry.scripts]
+labor_model = "labor_model.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
