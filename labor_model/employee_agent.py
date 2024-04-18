@@ -5,7 +5,8 @@ import mesa
 from scipy.stats import dweibull, gamma
 
 from labor_model.local_logging import logger
-from labor_model.utils import CHANGING_JOBS_RAISE, INITIAL_SALARY, decide_based_on_probability
+from labor_model.utils import (CHANGING_JOBS_RAISE, INITIAL_SALARY,
+                               decide_based_on_probability)
 
 search_probability_f = dweibull(0.4093106, 0.9999999, 0.2369317)
 leave_probability_f = gamma(1.6878294628925388, -0.3202142090949511, 15.104677133022975)
@@ -100,9 +101,9 @@ class EmployeeAgent(mesa.Agent):
                 self._apply_to_company(selected_company)
 
     def _select_company(self):
-        hiring_companies = list(filter(
-            lambda c: c.accepting_applications, self.model.companies
-        ))
+        hiring_companies = list(
+            filter(lambda c: c.accepting_applications, self.model.companies)
+        )
         if not hiring_companies:
             return None
         return self.random.choice(hiring_companies)
@@ -138,4 +139,6 @@ class EmployeeAgent(mesa.Agent):
         previous_salary = self.work_records[-1].salary
 
         # every month he asks for 1% less
-        return round(previous_salary * (CHANGING_JOBS_RAISE - 0.01 * self.time_in_state))
+        return round(
+            previous_salary * (CHANGING_JOBS_RAISE - 0.01 * self.time_in_state)
+        )

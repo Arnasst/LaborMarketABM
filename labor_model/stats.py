@@ -1,14 +1,16 @@
 from dataclasses import dataclass
-from labor_model.employee_agent import (EmployeeAgent,
-                                                         WorkRecord)
+
+from labor_model.employee_agent import EmployeeAgent, WorkRecord
 from labor_model.model import LaborModel
 
+
 @dataclass
-class Statistic():
+class Statistic:
     average: float
     median: float
     max: float
     min: float
+
 
 class StepStatsCalculator:
     model: LaborModel
@@ -28,16 +30,21 @@ class StepStatsCalculator:
         wage_stats = self.calculate_wage_stats()
         self.wage_stats.append(wage_stats)
 
-
     def calculate_unemployment_rate(self) -> float:
-        return sum(1 for e in self.model.employees if not e.is_working) / len(self.model.employees)
+        return sum(1 for e in self.model.employees if not e.is_working) / len(
+            self.model.employees
+        )
 
     def calculate_wage_stats(self) -> float:
         working_employees = [e for e in self.model.employees if e.is_working]
-        average_wage = sum(e.current_salary for e in working_employees) / len(working_employees)
+        average_wage = sum(e.current_salary for e in working_employees) / len(
+            working_employees
+        )
         max_wage = max(e.current_salary for e in working_employees)
         min_wage = min(e.current_salary for e in working_employees)
-        median_wage = sorted(e.current_salary for e in working_employees)[len(working_employees) // 2]
+        median_wage = sorted(e.current_salary for e in working_employees)[
+            len(working_employees) // 2
+        ]
         return Statistic(average_wage, median_wage, max_wage, min_wage)
 
 

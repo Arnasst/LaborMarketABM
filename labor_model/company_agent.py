@@ -2,11 +2,9 @@ from random import random
 
 import mesa
 
-from labor_model.employee_agent import (Application,
-                                                         EmployeeAgent)
+from labor_model.employee_agent import Application, EmployeeAgent
 from labor_model.local_logging import logger
-from labor_model.utils import (AVERAGE_PRODUCTIVITY,
-                                                COST_PER_HIRE)
+from labor_model.utils import AVERAGE_PRODUCTIVITY, COST_PER_HIRE
 
 
 class CompanyAgent(mesa.Agent):
@@ -64,9 +62,7 @@ class CompanyAgent(mesa.Agent):
                 )
                 self._hire_applicant(best_application)
                 additional_productivity = best_application.employee.productivity
-            if self._contemplate_hiring(
-                total_productivity + additional_productivity
-            ):
+            if self._contemplate_hiring(total_productivity + additional_productivity):
                 self.accepting_applications = True
         else:
             self.accepting_applications = False

@@ -4,14 +4,15 @@ import mesa
 import numpy as np
 
 from labor_model.company_agent import CompanyAgent
-from labor_model.employee_agent import (EmployeeAgent,
-                                                         Seniority)
+from labor_model.employee_agent import EmployeeAgent, Seniority
 from labor_model.local_logging import logger
-from labor_model.utils import AVERAGE_PRODUCTIVITY, INFLATION_RATE, INITIAL_EMPLOYMENT_RATE, INITIAL_PRODUCT_COST, INITIAL_SALARY, JOBS_TO_EMPLOYEES_RATIO
+from labor_model.utils import (AVERAGE_PRODUCTIVITY, INFLATION_RATE,
+                               INITIAL_EMPLOYMENT_RATE, INITIAL_PRODUCT_COST,
+                               INITIAL_SALARY, JOBS_TO_EMPLOYEES_RATIO)
 
 
 class LaborModel(mesa.Model):
-    agent_id_iter : int
+    agent_id_iter: int
     product_cost: float
 
     employees: list[EmployeeAgent]
@@ -42,7 +43,6 @@ class LaborModel(mesa.Model):
 
         # Share of the base productivity value kept by the firm 0.71
 
-
         # https://www.payscale.com/content/report/2024-compensation-best-practice-report.pdf
         # 3% is the average base pay increase predicted for 2024
         # 6% more jobs than employees
@@ -51,7 +51,9 @@ class LaborModel(mesa.Model):
         # Changing jobs results in around 10% salary increase
 
         self.product_cost = INITIAL_PRODUCT_COST
-        self.total_products = num_employees * AVERAGE_PRODUCTIVITY * JOBS_TO_EMPLOYEES_RATIO
+        self.total_products = (
+            num_employees * AVERAGE_PRODUCTIVITY * JOBS_TO_EMPLOYEES_RATIO
+        )
 
         self.num_companies = num_companies
         self.num_employees = num_employees
@@ -85,8 +87,15 @@ class LaborModel(mesa.Model):
 
             if current_companies_idx < len(self.companies):
                 current_company = self.companies[current_companies_idx]
-                current_company_productivity = current_company._calculate_total_productivity()
-                if current_company_productivity < INITIAL_EMPLOYMENT_RATE * current_company.available_sellable_products_count / JOBS_TO_EMPLOYEES_RATIO:
+                current_company_productivity = (
+                    current_company._calculate_total_productivity()
+                )
+                if (
+                    current_company_productivity
+                    < INITIAL_EMPLOYMENT_RATE
+                    * current_company.available_sellable_products_count
+                    / JOBS_TO_EMPLOYEES_RATIO
+                ):
                     current_company.employees.append(e)
                     e.change_work_state(current_company.unique_id, INITIAL_SALARY)
                 else:
@@ -99,7 +108,7 @@ class LaborModel(mesa.Model):
         if self.schedule.steps % 12 == 0:
             logger.info("Adjusting market shares")
             self._adjust_market_shares()
-            self.product_cost *= (1 + INFLATION_RATE)
+            self.product_cost *= 1 + INFLATION_RATE
             self._apply_company_yearly_raises()
 
         self.schedule.step()
@@ -127,7 +136,7 @@ class LaborModel(mesa.Model):
                 bankrupt_company.market_share,
                 productivity_ratio,
                 company_available_products,
-                new_company_funds
+                new_company_funds,
             )
             self.companies.append(new_company)
             self.agent_id_iter += 1
@@ -169,4 +178,4 @@ class LaborModel(mesa.Model):
         for company in self.companies:
             if company.funds > 5000:
                 for employee in company.employees:
-                    employee.current_salary *= (1 + INFLATION_RATE)
+                    employee.current_salary *= 1 + INFLATION_RATE
