@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.11,<3.13"
 mesa = "^2.1.4"
 scipy = "^1.13.0"
+openai = "^1.23.2"
 
 
 [tool.poetry.scripts]

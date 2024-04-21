@@ -1,18 +1,10 @@
 from random import random
 
 from labor_model.company_agent_base import CompanyAgentBase
-from labor_model.employee_agent import Application
 from labor_model.utils import AVERAGE_PRODUCTIVITY, COST_PER_HIRE
 
 
-class CompanyAgent(CompanyAgentBase):
-    def _choose_best_application(self) -> Application:
-        return min(
-            self.applications,
-            key=lambda application: application.desired_salary
-            / (application.employee.productivity - 1 + random() * 2),
-        )
-
+class CompanyLLMAgent(CompanyAgentBase):
     def _decide_whether_to_fire(
         self,
         monthly_employee_cost: int,
