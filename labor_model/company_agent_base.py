@@ -23,7 +23,7 @@ class CompanyAgentBase(mesa.Agent):
         market_share: float,
         productivity_ratio: float,
         available_sellable_products_count: int,
-        funds: int = 10000,
+        funds: int,
     ):
         super().__init__(unique_id, model)
 

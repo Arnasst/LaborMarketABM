@@ -2,6 +2,7 @@ from random import random
 
 import mesa
 import numpy as np
+from openai import OpenAI
 
 from labor_model.company_agent import CompanyAgent
 from labor_model.employee_agent import EmployeeAgent, Seniority
@@ -18,7 +19,13 @@ class LaborModel(mesa.Model):
     employees: list[EmployeeAgent]
     companies: list[CompanyAgent]
 
-    def __init__(self, num_employees: int, num_companies: int):
+    def __init__(
+        self,
+        num_employees: int,
+        num_companies: int,
+        llm_based: bool = False,
+        open_ai_client: OpenAI | None = None,
+    ):
         # Worksim model
 
         # µ0 Average base hourly production for blue collar jobs 4.92
@@ -74,6 +81,7 @@ class LaborModel(mesa.Model):
                 initial_market_shares[i],
                 company_productivity,
                 company_available_products,
+                10000,
             )
             self.companies.append(c)
             self.schedule.add(c)

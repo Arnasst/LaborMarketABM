@@ -35,8 +35,10 @@ class StepStatsCalculator:
             self.model.employees
         )
 
-    def calculate_wage_stats(self) -> float:
+    def calculate_wage_stats(self) -> Statistic | None:
         working_employees = [e for e in self.model.employees if e.is_working]
+        if not working_employees:
+            return None
         average_wage = sum(e.current_salary for e in working_employees) / len(
             working_employees
         )
