@@ -22,6 +22,9 @@ class StepStatsCalculator:
 
         self.unemployment_rates = []
         self.wage_stats = []
+        self.company_funds = []
+        self.total_funds = []
+        self.product_fill_rates = []
 
     def step(self):
         unemployment_rate = round(self.calculate_unemployment_rate(), 3)
@@ -29,6 +32,15 @@ class StepStatsCalculator:
 
         wage_stats = self.calculate_wage_stats()
         self.wage_stats.append(wage_stats)
+
+        company_funds = self.get_company_funds()
+        self.company_funds.append(company_funds)
+
+        total_funds = round(sum(company_funds))
+        self.total_funds.append(total_funds)
+
+        product_fill_rates = round(self.get_companies_product_fill_rate(), 2)
+        self.product_fill_rates.append(product_fill_rates)
 
     def calculate_unemployment_rate(self) -> float:
         return sum(1 for e in self.model.employees if not e.is_working) / len(
@@ -49,6 +61,11 @@ class StepStatsCalculator:
         ]
         return Statistic(average_wage, median_wage, max_wage, min_wage)
 
+    def get_company_funds(self) -> list[float]:
+        return [c.funds for c in self.model.companies]
+
+    def get_companies_product_fill_rate(self) -> float:
+        return sum([c._calculate_total_productivity() / c.available_sellable_products_count for c in self.model.companies]) / len(self.model.companies)
 
 def calculate_work_lengths(all_ended_work_records: list[WorkRecord]) -> list[int]:
     return [r.to_time - r.from_time for r in all_ended_work_records]

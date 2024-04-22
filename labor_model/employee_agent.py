@@ -109,7 +109,7 @@ class EmployeeAgent(mesa.Agent):
         return self.random.choice(hiring_companies)
 
     def _apply_to_company(self, company):
-        logger.info(
+        logger.debug(
             f"Employee #{self.unique_id} applied to company #{company.unique_id}"
         )
 

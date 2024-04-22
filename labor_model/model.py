@@ -75,6 +75,7 @@ class LaborModel(mesa.Model):
             company_available_products = int(
                 self.total_products * initial_market_shares[i]
             )
+
             c = CompanyAgent(
                 i,
                 self,
@@ -129,8 +130,8 @@ class LaborModel(mesa.Model):
             ),
             None,
         ):
-            logger.info(f"Company #{bankrupt_company.unique_id} went bankrupt")
-            logger.info(f"Company #{self.agent_id_iter} takes over the market share")
+            logger.warning(f"Company #{bankrupt_company.unique_id} went bankrupt")
+            logger.warning(f"Company #{self.agent_id_iter} takes over the market share")
             self.companies.remove(bankrupt_company)
 
             productivity_ratio = self._generate_company_productivity_ratio()
@@ -161,7 +162,12 @@ class LaborModel(mesa.Model):
         numbers = np.random.rand(self.num_companies)
         normalized_numbers = numbers / np.sum(numbers)
 
-        return normalized_numbers
+        min_share_for_6_products = 6 / self.total_products
+
+        adjusted_numbers = np.maximum(normalized_numbers, min_share_for_6_products)
+        adjusted_shares = adjusted_numbers / np.sum(adjusted_numbers)
+
+        return adjusted_shares
 
     def _adjust_market_shares(self) -> None:
         # Mean (trend) for the stochastic shock
