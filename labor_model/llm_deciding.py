@@ -3,20 +3,21 @@ from openai import OpenAI
 from labor_model.employee_agent import Application, EmployeeAgent
 
 
-HR_PROMPT = "You are an HR assistant. Your answers to each question should be Yes or No"
-HR_HIRE_FIRE_PROMPT = "You are an HR assistant. Your answers to each question should be Hire or Fire"
+HR_CHOOSE_PROMPT = "You are an HR assistant. Your answer to each question should be only the number of the chosen person."
+HR_HIRE_FIRE_PROMPT = "You are an HR assistant. Hiring costs 2000. Your answers to each question should be Hire, Fire or Nothing." # Firing saves money, but reduces income.
 SELLING_ALL_PROMPT = "We are selling all products that we produce"
 PRODUCING_TOO_MUCH_PROMPT = "We are producing more than we can sell"
 
 FUNDS_PROMPT_F = lambda funds: f"We currently have {funds}$"
 
-HIRE_FIRE_QUESTION_PROMPT = "Should we hire more people or fire someone?"
+HIRE_FIRE_QUESTION_PROMPT = "Should we hire more people, do nothing or fire someone?"
 
 class Decision(StrEnum):
     HIRE = "Hire"
     FIRE = "Fire"
+    NOTHING = "Nothing"
 
-def ask_about_hiring(client: OpenAI, funds: int, selling_all: bool) -> bool:
+def ask_about_employee_count(client: OpenAI, funds: int, selling_all: bool) -> bool:
     selling_prompt = SELLING_ALL_PROMPT if selling_all else PRODUCING_TOO_MUCH_PROMPT
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
