@@ -83,11 +83,14 @@ class CompanyAgentBase(mesa.Agent):
             self.employees,
             key=lambda employee: employee.current_salary / employee.productivity,
         )
-        self.employees.remove(least_efficient_employee)
+        self._fire_employee(least_efficient_employee)
+
+    def _fire_employee(self, employee):
+        self.employees.remove(employee)
         logger.info(
-            f"Company #{self.unique_id} fired employee #{least_efficient_employee.unique_id}"
+            f"Company #{self.unique_id} fired employee #{employee.unique_id}"
         )
-        least_efficient_employee.change_work_state()
+        employee.change_work_state()
 
     def _hire_applicant(self, application: Application):
         applicant = application.employee
