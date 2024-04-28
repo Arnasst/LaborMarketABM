@@ -4,7 +4,7 @@ import mesa
 
 from labor_model.employee_agent import Application, EmployeeAgent
 from labor_model.local_logging import logger
-from labor_model.utils import COST_PER_HIRE
+from labor_model.utils import BASE_OPERATING_COST, COST_PER_HIRE
 
 
 class CompanyAgentBase(mesa.Agent):
@@ -41,15 +41,13 @@ class CompanyAgentBase(mesa.Agent):
         logger.info(f"Company #{self.unique_id} step. Funds: {self.funds:.2f}. ")
 
         total_productivity = self._calculate_total_productivity()
-        monthly_employee_cost = sum(
-            employee.current_salary for employee in self.employees
-        )
+        monthly_expenses = self._calculate_monthly_expenses()
         monthly_earnings = self._calculate_earnings()
         logger.info(
-            f"Company #{self.unique_id} monthly earnings: {monthly_earnings:.2f}. Monthly employee cost: {monthly_employee_cost:.2f}."
+            f"Company #{self.unique_id} monthly earnings: {monthly_earnings:.2f}. Monthly expenses: {monthly_expenses:.2f}."
         )
 
-        self.funds -= monthly_employee_cost
+        self.funds -= monthly_expenses
         self.funds += monthly_earnings
 
         if self._contemplate_hiring(total_productivity):
@@ -66,9 +64,14 @@ class CompanyAgentBase(mesa.Agent):
         self.applications = []
 
         if self.employees and self._decide_whether_to_fire(
-            monthly_employee_cost, monthly_earnings, total_productivity
+            monthly_expenses, monthly_earnings, total_productivity
         ):
             self._fire_inefficient_employee()
+
+    def _calculate_monthly_expenses(self) -> float:
+        return sum(
+            employee.current_salary for employee in self.employees
+        ) + BASE_OPERATING_COST
 
     def _calculate_earnings(self) -> float:
         return self._calculate_total_productivity() * self.model.product_cost

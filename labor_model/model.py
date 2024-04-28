@@ -139,7 +139,7 @@ class LaborModel(mesa.Model):
             company_available_products = int(
                 self.total_products * bankrupt_company.market_share
             )
-            new_company_funds = 10000 + random() * 50000
+            new_company_funds = company_available_products * self.product_cost * 3
             new_company = CompanyAgent(
                 self.agent_id_iter,
                 self,
