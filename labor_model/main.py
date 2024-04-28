@@ -25,9 +25,13 @@ def main():
         stats.step()
 
     print(f"Unemployment rates: {stats.unemployment_rates}")
+    unemployment_average = sum(stats.unemployment_rates) / len(stats.unemployment_rates)
+    unemployment_deviation = sum((rate - unemployment_average) ** 2 for rate in stats.unemployment_rates) / len(stats.unemployment_rates)
+    print(f"Unemployment average: {unemployment_average:.2}")
+    print(f"Unemployment deviation: {unemployment_deviation:.2}")
     # print(f"Wage stats: {stats.wage_stats}")
-    print(f"Total funds: {stats.total_funds}")
-    print(f"Fill rates: {stats.product_fill_rates}")
+    # print(f"Total funds: {stats.total_funds}")
+    # print(f"Fill rates: {stats.product_fill_rates}")
     # print_employee_stats(model.employees)
 
 
