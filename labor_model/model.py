@@ -75,6 +75,7 @@ class LaborModel(mesa.Model):
             company_available_products = int(
                 self.total_products * initial_market_shares[i]
             )
+            company_funds = company_available_products * self.product_cost * 3
 
             c = CompanyAgent(
                 i,
@@ -82,7 +83,7 @@ class LaborModel(mesa.Model):
                 initial_market_shares[i],
                 company_productivity,
                 company_available_products,
-                10000,
+                company_funds,
             )
             self.companies.append(c)
             self.schedule.add(c)
