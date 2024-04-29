@@ -2,6 +2,9 @@ import logging
 
 from openai import OpenAI
 
+from random import seed
+from numpy.random import seed as np_seed
+
 from labor_model.config import Settings
 from labor_model.local_logging import logger
 from labor_model.model import LaborModel
@@ -11,6 +14,10 @@ from labor_model.stats import StepStatsCalculator, print_company_stats, print_em
 def main():
     logger.setLevel(logging.WARNING)
     settings = Settings()
+
+    # To fix the results
+    # seed(1)
+    # np_seed(1)
 
     NUM_EMPLOYEES = 100
     NUM_COMPANIES = 10
