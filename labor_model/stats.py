@@ -25,6 +25,8 @@ class StepStatsCalculator:
         self.company_funds = []
         self.total_funds = []
         self.product_fill_rates = []
+        self.iterative_profits = []
+        self.overall_profits = []
 
     def step(self):
         unemployment_rate = round(self.calculate_unemployment_rate(), 3)
@@ -36,11 +38,20 @@ class StepStatsCalculator:
         company_funds = self.get_company_funds()
         self.company_funds.append(company_funds)
 
+        profits = self.calculate_profits()
+        self.iterative_profits.append(profits)
+
         total_funds = round(sum(company_funds))
         self.total_funds.append(total_funds)
 
         product_fill_rates = round(self.get_companies_product_fill_rate(), 2)
         self.product_fill_rates.append(product_fill_rates)
+
+    def get_total_profits(self):
+        company_starting_funds = self.company_funds[0]
+        company_ending_funds = self.company_funds[-1]
+        total_profits = [(company_ending_funds[i] - company_starting_funds[i]) / company_starting_funds[i] for i in range(len(company_starting_funds))]
+        return total_profits
 
     def calculate_unemployment_rate(self) -> float:
         return sum(1 for e in self.model.employees if not e.is_working) / len(
@@ -63,6 +74,18 @@ class StepStatsCalculator:
 
     def get_company_funds(self) -> list[float]:
         return [c.funds for c in self.model.companies]
+
+    def calculate_profits(self) -> list[float]:
+        if len(self.company_funds) < 2:
+            return [0] * len(self.model.companies)
+        latest_funds = self.company_funds[-1]
+        before_latest_funds = self.company_funds[-2]
+
+        profits = []
+        for latest, before_latest in zip(latest_funds, before_latest_funds):
+            profits.append((latest - before_latest) / latest)
+
+        return profits
 
     def get_companies_product_fill_rate(self) -> float:
         return sum([c._calculate_total_productivity() / c.available_sellable_products_count for c in self.model.companies]) / len(self.model.companies)
@@ -95,3 +118,11 @@ def print_employee_stats(employees: list[EmployeeAgent]) -> None:
     time_between_jobs = calculate_time_between_jobs(all_employee_work_records)
     print(f"Average work tenure: {sum(work_lengths) / len(work_lengths)}")
     print(f"Average time between jobs: {sum(time_between_jobs) / len(work_lengths)}")
+
+def print_unemployment_stats(unemployment_rates: list[float]) -> None:
+    unemployment_average = sum(unemployment_rates) / len(unemployment_rates)
+    unemployment_deviation = sum(
+        (rate - unemployment_average) ** 2 for rate in unemployment_rates
+    ) / len(unemployment_rates)
+    print(f"Unemployment average: {unemployment_average:.2}")
+    print(f"Unemployment deviation: {unemployment_deviation:.2}")

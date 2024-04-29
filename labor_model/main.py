@@ -5,7 +5,7 @@ from openai import OpenAI
 from labor_model.config import Settings
 from labor_model.local_logging import logger
 from labor_model.model import LaborModel
-from labor_model.stats import StepStatsCalculator, print_employee_stats
+from labor_model.stats import StepStatsCalculator, print_employee_stats, print_unemployment_stats
 
 
 def main():
@@ -24,14 +24,14 @@ def main():
         model.step()
         stats.step()
 
-    print(f"Unemployment rates: {stats.unemployment_rates}")
-    unemployment_average = sum(stats.unemployment_rates) / len(stats.unemployment_rates)
-    unemployment_deviation = sum((rate - unemployment_average) ** 2 for rate in stats.unemployment_rates) / len(stats.unemployment_rates)
-    print(f"Unemployment average: {unemployment_average:.2}")
-    print(f"Unemployment deviation: {unemployment_deviation:.2}")
+    profits = stats.get_total_profits()
+    print(f"Profits: {profits}")
+    # print(f"Unemployment rates: {stats.unemployment_rates}")
+
     # print(f"Wage stats: {stats.wage_stats}")
     # print(f"Total funds: {stats.total_funds}")
     # print(f"Fill rates: {stats.product_fill_rates}")
+    print_unemployment_stats(stats.unemployment_rates)
     print_employee_stats(model.employees)
 
 
