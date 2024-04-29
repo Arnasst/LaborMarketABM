@@ -90,12 +90,11 @@ class EmployeeAgent(mesa.Agent):
                 self.time_in_state += 1
 
     def _contemplate_working(self):
-        # TODO: pakeist i pdf
         search_probability = search_probability_f.cdf(self.time_in_state)
         logger.debug(
             f"Employee #{self.unique_id} search probability: {search_probability}"
         )
-        if decide_based_on_probability(search_probability):
+        if True: # decide_based_on_probability(search_probability):
             selected_company = self._select_company()
             if selected_company:
                 self._apply_to_company(selected_company)

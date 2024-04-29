@@ -32,7 +32,7 @@ def main():
     # print(f"Wage stats: {stats.wage_stats}")
     # print(f"Total funds: {stats.total_funds}")
     # print(f"Fill rates: {stats.product_fill_rates}")
-    # print_employee_stats(model.employees)
+    print_employee_stats(model.employees)
 
 
 if __name__ == "__main__":
