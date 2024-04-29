@@ -5,7 +5,7 @@ from openai import OpenAI
 from labor_model.config import Settings
 from labor_model.local_logging import logger
 from labor_model.model import LaborModel
-from labor_model.stats import StepStatsCalculator, print_employee_stats, print_unemployment_stats
+from labor_model.stats import StepStatsCalculator, print_company_stats, print_employee_stats, print_unemployment_stats
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
         stats.step()
 
     profits = stats.get_total_profits()
-    print(f"Profits: {profits}")
+    print_company_stats(model.companies, profits)
     # print(f"Unemployment rates: {stats.unemployment_rates}")
 
     # print(f"Wage stats: {stats.wage_stats}")

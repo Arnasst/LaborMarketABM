@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from labor_model.employee_agent import EmployeeAgent, WorkRecord
+from labor_model.company_agent import CompanyAgent
 from labor_model.model import LaborModel
 
 
@@ -50,7 +51,10 @@ class StepStatsCalculator:
     def get_total_profits(self):
         company_starting_funds = self.company_funds[0]
         company_ending_funds = self.company_funds[-1]
-        total_profits = [(company_ending_funds[i] - company_starting_funds[i]) / company_starting_funds[i] for i in range(len(company_starting_funds))]
+        total_profits = {}
+        for company in company_starting_funds:
+            if company in company_ending_funds:
+                total_profits[company] = (company_ending_funds[company] - company_starting_funds[company]) / company_starting_funds[company]
         return total_profits
 
     def calculate_unemployment_rate(self) -> float:
@@ -73,17 +77,18 @@ class StepStatsCalculator:
         return Statistic(average_wage, median_wage, max_wage, min_wage)
 
     def get_company_funds(self) -> list[float]:
-        return [c.funds for c in self.model.companies]
+        return {c.unique_id: c.funds for c in self.model.companies}
 
-    def calculate_profits(self) -> list[float]:
+    def calculate_profits(self) -> list[dict[int, float]]:
         if len(self.company_funds) < 2:
             return [0] * len(self.model.companies)
         latest_funds = self.company_funds[-1]
         before_latest_funds = self.company_funds[-2]
 
-        profits = []
-        for latest, before_latest in zip(latest_funds, before_latest_funds):
-            profits.append((latest - before_latest) / latest)
+        profits = {}
+        for user_id in latest_funds:
+            if user_id in before_latest_funds:
+                profits[user_id] = (latest_funds[user_id] - before_latest_funds[user_id]) / before_latest_funds[user_id]
 
         return profits
 
@@ -126,3 +131,9 @@ def print_unemployment_stats(unemployment_rates: list[float]) -> None:
     ) / len(unemployment_rates)
     print(f"Unemployment average: {unemployment_average:.2}")
     print(f"Unemployment deviation: {unemployment_deviation:.2}")
+
+def print_company_stats(companies: list[CompanyAgent], profits: list[dict[int, float]]) -> None:
+    for company in companies:
+        if company.unique_id not in profits:
+            continue
+        print(f"Company {company.unique_id} \n\tprofit: {profits[company.unique_id]:.2}\n\tmarket share: {company.market_share:.2}\n\tproductivity_ratio: {company.productivity_ratio:.2}")

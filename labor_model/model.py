@@ -18,6 +18,7 @@ class LaborModel(mesa.Model):
 
     employees: list[EmployeeAgent]
     companies: list[CompanyAgent]
+    bankrupt_companies: list[CompanyAgent]
 
     def __init__(
         self,
@@ -67,6 +68,7 @@ class LaborModel(mesa.Model):
         # Gal random activation? Nes dabar kai kurie advantaged yra
         self.schedule = mesa.time.SimultaneousActivation(self)
         self.companies = []
+        self.bankrupt_companies = []
         self.employees = []
 
         initial_market_shares = self.get_initial_market_shares()
@@ -133,6 +135,7 @@ class LaborModel(mesa.Model):
         ):
             logger.warning(f"Company #{bankrupt_company.unique_id} went bankrupt")
             logger.warning(f"Company #{self.agent_id_iter} takes over the market share")
+            self.bankrupt_companies.append(bankrupt_company)
             self.companies.remove(bankrupt_company)
 
             productivity_ratio = self._generate_company_productivity_ratio()
