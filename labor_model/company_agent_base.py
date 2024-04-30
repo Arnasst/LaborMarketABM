@@ -53,8 +53,10 @@ class CompanyAgentBase(mesa.Agent):
         if self._contemplate_hiring(total_productivity):
             additional_productivity = 0
             if self.applications:
-                best_application = self._choose_best_application()
-                self._hire_applicant(best_application)
+                for _ in range(3):
+                    best_application = self._choose_best_application()
+                    if self._hire_applicant(best_application):
+                        break
                 additional_productivity = best_application.employee.productivity
             if self._contemplate_hiring(total_productivity + additional_productivity):
                 self.accepting_applications = True
@@ -95,8 +97,9 @@ class CompanyAgentBase(mesa.Agent):
         )
         employee.change_work_state()
 
-    def _hire_applicant(self, application: Application):
+    def _hire_applicant(self, application: Application) -> bool:
         applicant = application.employee
+        self.applications.remove(application)
         if not applicant.is_working:
             logger.warning(
                 f"Company #{self.unique_id} hired employee #{applicant.unique_id}"
@@ -109,7 +112,8 @@ class CompanyAgentBase(mesa.Agent):
             logger.info(
                 f"Company #{self.unique_id} unable to hire employee #{applicant.unique_id}, because he is already working"
             )
-        self.applications.remove(application)
+            return False
+        return True
 
     def _refuse_applicant(self, application: Application):
         applicant = application.employee
