@@ -19,21 +19,21 @@ def main():
     # seed(1)
     # np_seed(1)
 
-    NUM_EMPLOYEES = 100
+    NUM_EMPLOYEES = 150
     NUM_COMPANIES = 10
     llm_based = False
     open_ai_client = OpenAI(settings.open_ai_key) if llm_based else None
     model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, llm_based, open_ai_client)
     stats = StepStatsCalculator(model)
 
-    MODEL_STEPS = 60
+    MODEL_STEPS = 120
     for _ in range(MODEL_STEPS):
         model.step()
         stats.step()
 
     profits = stats.get_total_profits()
     print_company_stats(model.companies, profits)
-    # print(f"Unemployment rates: {stats.unemployment_rates}")
+    print(f"Unemployment rates: {stats.unemployment_rates}")
 
     # print(f"Wage stats: {stats.wage_stats}")
     # print(f"Total funds: {stats.total_funds}")
