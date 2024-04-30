@@ -116,7 +116,8 @@ class EmployeeAgent(mesa.Agent):
         company.applications.append(Application(self, desired_salary))
 
     def _contemplate_leaving(self) -> bool:
-        leave_probability = leave_probability_f.pdf(self.time_in_state)
+        # Divide by two because employee can leave or company can fire
+        leave_probability = leave_probability_f.pdf(self.time_in_state) / 2
         logger.debug(
             f"Employee #{self.unique_id} leave probability: {leave_probability}"
         )
