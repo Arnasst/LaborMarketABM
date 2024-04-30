@@ -25,7 +25,7 @@ class CompanyAgent(CompanyAgentBase):
             monthly_employee_cost > monthly_earnings
             or total_productivity > self.available_sellable_products_count
         ):
-            return random() < 0.2
+            return random() < 0.05
         return False
 
     def _contemplate_hiring(self, total_productivity: float) -> bool:
