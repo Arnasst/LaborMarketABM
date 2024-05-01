@@ -20,6 +20,9 @@ class LaborModel(mesa.Model):
     companies: list[CompanyAgent]
     bankrupt_companies: list[CompanyAgent]
 
+    quit_count: int
+    fire_count: int
+
     def __init__(
         self,
         num_employees: int,
@@ -70,6 +73,9 @@ class LaborModel(mesa.Model):
         self.companies = []
         self.bankrupt_companies = []
         self.employees = []
+
+        self.quit_count = 0
+        self.fire_count = 0
 
         initial_market_shares = self.get_initial_market_shares()
         for i in range(self.num_companies):

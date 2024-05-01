@@ -130,6 +130,7 @@ class EmployeeAgent(mesa.Agent):
                 filter(lambda c: c.unique_id == self.employer_id, self.model.companies)
             )
             company.employees.remove(self)
+            self.model.quit_count += 1
             return True
         return False
 
