@@ -41,6 +41,10 @@ def main():
     print_unemployment_stats(stats.unemployment_rates)
     print_employee_stats(model.employees)
 
+    change_count = model.quit_count + model.fire_count
+    print(f"Quit percentage: {model.quit_count / change_count:.2}")
+    print(f"Fire percentage: {model.fire_count / change_count:.2}")
+
 
 if __name__ == "__main__":
     main()

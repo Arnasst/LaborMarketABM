@@ -121,8 +121,8 @@ def print_employee_stats(employees: list[EmployeeAgent]) -> None:
     ]
     work_lengths = calculate_work_lengths(all_ended_work_records)
     time_between_jobs = calculate_time_between_jobs(all_employee_work_records)
-    print(f"Average work tenure: {sum(work_lengths) / len(work_lengths)}")
-    print(f"Average time between jobs: {sum(time_between_jobs) / len(work_lengths)}")
+    print(f"Average work tenure: {sum(work_lengths) / len(work_lengths):.2f}")
+    print(f"Average time between jobs: {sum(time_between_jobs) / len(work_lengths):.2f}")
 
 def print_unemployment_stats(unemployment_rates: list[float]) -> None:
     unemployment_average = sum(unemployment_rates) / len(unemployment_rates)
