@@ -8,6 +8,7 @@ from labor_model.company_agent import CompanyAgent
 from labor_model.config import Settings
 from labor_model.employee_agent import EmployeeAgent, Seniority
 from labor_model.local_logging import logger
+from labor_model.step_stats_collector import StepStatsCollector
 from labor_model.utils import (AVERAGE_PRODUCTIVITY, INFLATION_RATE,
                                JOBS_TO_EMPLOYEES_RATIO)
 
@@ -130,10 +131,7 @@ class LaborModel(mesa.Model):
 
         self.agent_id_iter = self.num_employees + self.num_companies
 
-        self.datacollector = mesa.DataCollector(
-            model_reporters={"Total Companies": lambda m: m.num_companies},  # Example reporter
-            # agent_reporters={"Happiness": "happiness"}  # Assuming agents have a happiness attribute
-        )
+        self.datacollector = StepStatsCollector(self)
 
     def step(self):
         self.datacollector.collect(self)
