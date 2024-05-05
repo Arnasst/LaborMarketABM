@@ -2,7 +2,7 @@ from random import random
 
 from labor_model.company_agent_base import CompanyAgentBase
 from labor_model.employee_agent import Application
-from labor_model.utils import AVERAGE_PRODUCTIVITY, COST_PER_HIRE, INITIAL_SALARY
+from labor_model.utils import AVERAGE_PRODUCTIVITY
 
 
 class CompanyAgent(CompanyAgentBase):
@@ -31,7 +31,7 @@ class CompanyAgent(CompanyAgentBase):
     def _contemplate_hiring(self, total_productivity: float) -> bool:
         average_salary = self._calculate_employee_average_salary()
         if (
-            self.funds > COST_PER_HIRE + 2 * average_salary
+            self.funds > self.model.cost_per_hire + 2 * average_salary
             and total_productivity
             < self.available_sellable_products_count - AVERAGE_PRODUCTIVITY
         ):
@@ -40,7 +40,7 @@ class CompanyAgent(CompanyAgentBase):
 
     def _calculate_employee_average_salary(self) -> float:
         if not self.employees:
-            return INITIAL_SALARY
+            return self.model.initial_salary
         return sum(employee.current_salary for employee in self.employees) / len(
             self.employees
         )

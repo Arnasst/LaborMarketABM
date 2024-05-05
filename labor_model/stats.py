@@ -136,4 +136,4 @@ def print_company_stats(companies: list[CompanyAgent], profits: list[dict[int, f
     for company in companies:
         if company.unique_id not in profits:
             continue
-        print(f"Company {company.unique_id} \n\tprofit: {profits[company.unique_id]:.2}\n\tmarket share: {company.market_share:.2}\n\tproductivity_ratio: {company.productivity_ratio:.2}")
+        print(f"Company {company.unique_id} \n\tprofit: {profits[company.unique_id]:.2}\n\tmarket share: {company.market_share:.2}\n\t")

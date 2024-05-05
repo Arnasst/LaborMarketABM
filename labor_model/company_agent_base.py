@@ -4,7 +4,6 @@ import mesa
 
 from labor_model.employee_agent import Application, EmployeeAgent
 from labor_model.local_logging import logger
-from labor_model.utils import BASE_OPERATING_COST, COST_PER_HIRE
 
 
 class CompanyAgentBase(mesa.Agent):
@@ -71,7 +70,7 @@ class CompanyAgentBase(mesa.Agent):
     def _calculate_monthly_expenses(self) -> float:
         return sum(
             employee.current_salary for employee in self.employees
-        ) + BASE_OPERATING_COST
+        ) + self.model.company_operating_cost
 
     def _calculate_earnings(self) -> float:
         return self._calculate_total_productivity() * self.model.product_cost
@@ -106,7 +105,7 @@ class CompanyAgentBase(mesa.Agent):
             self.employees.append(applicant)
             applicant.change_work_state(self.unique_id, application.desired_salary)
 
-            self.funds -= COST_PER_HIRE
+            self.funds -= self.model.cost_per_hire
         else:
             logger.info(
                 f"Company #{self.unique_id} unable to hire employee #{applicant.unique_id}, because he is already working"

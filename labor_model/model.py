@@ -5,16 +5,19 @@ import numpy as np
 from openai import OpenAI
 
 from labor_model.company_agent import CompanyAgent
+from labor_model.config import Settings
 from labor_model.employee_agent import EmployeeAgent, Seniority
 from labor_model.local_logging import logger
 from labor_model.utils import (AVERAGE_PRODUCTIVITY, INFLATION_RATE,
-                               INITIAL_EMPLOYMENT_RATE, INITIAL_PRODUCT_COST,
-                               INITIAL_SALARY, JOBS_TO_EMPLOYEES_RATIO)
+                               JOBS_TO_EMPLOYEES_RATIO)
 
 
 class LaborModel(mesa.Model):
     agent_id_iter: int
+
     product_cost: float
+    company_operating_cost: int
+    cost_per_hire: int
 
     employees: list[EmployeeAgent]
     companies: list[CompanyAgent]
@@ -27,6 +30,7 @@ class LaborModel(mesa.Model):
         self,
         num_employees: int,
         num_companies: int,
+        settings: Settings,
         llm_based: bool = False,
         open_ai_client: OpenAI | None = None,
     ):
@@ -61,7 +65,12 @@ class LaborModel(mesa.Model):
         # https://uk.indeed.com/career-advice/pay-salary/salary-increase-changing-jobs-uk
         # Changing jobs results in around 10% salary increase
 
-        self.product_cost = INITIAL_PRODUCT_COST
+        self.product_cost = settings.initial_product_cost
+        self.company_operating_cost = settings.base_operating_cost
+        self.cost_per_hire = settings.cost_per_hire
+        self.initial_salary = settings.initial_salary
+        self.changing_jobs_raise = settings.changing_jobs_raise
+
         self.total_products = (
             num_employees * AVERAGE_PRODUCTIVITY * JOBS_TO_EMPLOYEES_RATIO
         )
@@ -108,12 +117,12 @@ class LaborModel(mesa.Model):
                 )
                 if (
                     current_company_productivity
-                    < INITIAL_EMPLOYMENT_RATE
+                    < settings.initial_employment_rate
                     * current_company.available_sellable_products_count
                     / JOBS_TO_EMPLOYEES_RATIO
                 ):
                     current_company.employees.append(e)
-                    e.change_work_state(current_company.unique_id, INITIAL_SALARY)
+                    e.change_work_state(current_company.unique_id, self.initial_salary)
                 else:
                     current_companies_idx += 1
 

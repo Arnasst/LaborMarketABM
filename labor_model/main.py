@@ -23,7 +23,7 @@ def main():
     NUM_COMPANIES = 10
     llm_based = False
     open_ai_client = OpenAI(settings.open_ai_key) if llm_based else None
-    model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, llm_based, open_ai_client)
+    model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, settings, llm_based, open_ai_client)
     stats = StepStatsCalculator(model)
 
     MODEL_STEPS = 120

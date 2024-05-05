@@ -5,7 +5,7 @@ import mesa
 from scipy.stats import dweibull, gamma
 
 from labor_model.local_logging import logger
-from labor_model.utils import (CHANGING_JOBS_RAISE, INITIAL_SALARY,
+from labor_model.utils import (
                                decide_based_on_probability)
 
 search_probability_f = dweibull(0.4093106, 0.9999999, 0.2369317)
@@ -136,10 +136,10 @@ class EmployeeAgent(mesa.Agent):
 
     def _calculate_desired_salary(self) -> int:
         if not self.work_records:
-            return INITIAL_SALARY
+            return self.model.initial_salary
         previous_salary = self.work_records[-1].salary
 
         # every month he asks for 1% less
         return round(
-            previous_salary * (CHANGING_JOBS_RAISE - 0.01 * self.time_in_state)
+            previous_salary * (self.model.changing_jobs_raise - 0.01 * self.time_in_state)
         )
