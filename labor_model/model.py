@@ -70,6 +70,7 @@ class LaborModel(mesa.Model):
         self.cost_per_hire = settings.cost_per_hire
         self.initial_salary = settings.initial_salary
         self.changing_jobs_raise = settings.changing_jobs_raise
+        self.quitting_multiplier = settings.quitting_multiplier
 
         self.total_products = (
             num_employees * AVERAGE_PRODUCTIVITY * JOBS_TO_EMPLOYEES_RATIO

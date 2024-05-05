@@ -15,6 +15,8 @@ class Settings(BaseSettings):
 
     initial_employment_rate: float = 0.95
 
+    quitting_multiplier: float = 0.5
+
     model_config = SettingsConfigDict(
         env_file=Path(Path(__file__).parent.parent, ".env"), env_file_encoding="utf-8"
     )

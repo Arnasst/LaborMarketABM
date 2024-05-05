@@ -60,7 +60,7 @@ class EmployeeAgent(mesa.Agent):
 
         self.seniority = seniority
         self.productivity = productivity
-        self.current_salary = 1000
+        self.current_salary = None
 
     def change_work_state(
         self, employer_id: int | None = None, salary: int | None = None
@@ -117,7 +117,7 @@ class EmployeeAgent(mesa.Agent):
 
     def _contemplate_leaving(self) -> bool:
         # Divide by two because employee can leave or company can fire
-        leave_probability = leave_probability_f.pdf(self.time_in_state) / 2
+        leave_probability = leave_probability_f.pdf(self.time_in_state) * self.model.quitting_multiplier
         logger.debug(
             f"Employee #{self.unique_id} leave probability: {leave_probability}"
         )
