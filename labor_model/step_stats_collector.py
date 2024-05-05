@@ -28,7 +28,7 @@ class StepStatsCollector(DataCollector):
                 # "Total Funds": lambda m: round(sum(self.get_company_funds()), 2),
                 # "Product Fill Rates": lambda m: round(self.get_companies_product_fill_rate(), 2),
                 # "Iterative Profits": self.calculate_profits,
-                # "Overall Profits": self.calculate_overall_profits
+                "Company Profit Average": self.calculate_average_profits
             }
         )
         self.model = model
@@ -41,6 +41,9 @@ class StepStatsCollector(DataCollector):
             if company in company_ending_funds:
                 total_profits[company] = (company_ending_funds[company] - company_starting_funds[company]) / company_starting_funds[company]
         return total_profits
+
+    def calculate_average_profits(self) -> float:
+        return sum((c.funds - c.starting_funds) / c.starting_funds for c in self.model.companies) / len(self.model.companies)
 
     def calculate_unemployment_rate(self) -> float:
         return sum(1 for e in self.model.employees if not e.is_working) / len(

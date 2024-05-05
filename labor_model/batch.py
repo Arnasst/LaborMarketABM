@@ -12,7 +12,10 @@ def calculate_group_statistics(groups: list[list[dict]]):
 
     for group in groups:
         total_unemployment_rate = sum(item['Unemployment Rate'] for item in group)
-        average_unemployment_rate = total_unemployment_rate / len(group)
+        average_unemployment_rate = round(total_unemployment_rate / len(group), 2)
+
+        total_profits = sum(item['Company Profit Average'] for item in group)
+        average_profits = round(total_profits / len(group), 2)
 
         group_settings = group[0]['settings']
         group_info = {
@@ -26,6 +29,7 @@ def calculate_group_statistics(groups: list[list[dict]]):
             'initial_employment_rate': group_settings.initial_employment_rate,
             'quitting_multiplier': group_settings.quitting_multiplier,
             'average_unemployment_rate': average_unemployment_rate,
+            "average_company_profits": average_profits
         }
 
         statistics.append(group_info)

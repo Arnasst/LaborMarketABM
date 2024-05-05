@@ -7,6 +7,7 @@ from labor_model.local_logging import logger
 
 
 class CompanyAgentBase(mesa.Agent):
+    starting_funds: float
     funds: int
     market_share: float
     available_sellable_products_count: int
@@ -32,6 +33,7 @@ class CompanyAgentBase(mesa.Agent):
         self.applications = []
         self.employees = []
 
+        self.starting_funds = funds
         self.funds = funds
 
     def step(self):
