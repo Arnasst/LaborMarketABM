@@ -79,7 +79,6 @@ class LaborModel(mesa.Model):
 
         initial_market_shares = self.get_initial_market_shares()
         for i in range(self.num_companies):
-            company_productivity = self._generate_company_productivity_ratio()
             company_available_products = int(
                 self.total_products * initial_market_shares[i]
             )
@@ -89,7 +88,6 @@ class LaborModel(mesa.Model):
                 i,
                 self,
                 initial_market_shares[i],
-                company_productivity,
                 company_available_products,
                 company_funds,
             )
@@ -144,7 +142,6 @@ class LaborModel(mesa.Model):
             self.bankrupt_companies.append(bankrupt_company)
             self.companies.remove(bankrupt_company)
 
-            productivity_ratio = self._generate_company_productivity_ratio()
             company_available_products = int(
                 self.total_products * bankrupt_company.market_share
             )
@@ -153,16 +150,11 @@ class LaborModel(mesa.Model):
                 self.agent_id_iter,
                 self,
                 bankrupt_company.market_share,
-                productivity_ratio,
                 company_available_products,
                 new_company_funds,
             )
             self.companies.append(new_company)
             self.agent_id_iter += 1
-
-    # [0.9, 1.1]
-    def _generate_company_productivity_ratio(self) -> float:
-        return random() / 5 + 0.9
 
     # [AVERAGE_PRODUCTIVITY - 1, AVERAGE_PRODUCTIVITY + 1]
     def _generate_employee_productivity_ratio(self) -> float:

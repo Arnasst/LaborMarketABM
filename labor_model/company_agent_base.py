@@ -21,13 +21,11 @@ class CompanyAgentBase(mesa.Agent):
         unique_id: int,
         model: mesa.Model,
         market_share: float,
-        productivity_ratio: float,
         available_sellable_products_count: int,
         funds: int,
     ):
         super().__init__(unique_id, model)
 
-        self.productivity_ratio = productivity_ratio
         self.market_share = market_share
         self.available_sellable_products_count = available_sellable_products_count
 
@@ -79,7 +77,7 @@ class CompanyAgentBase(mesa.Agent):
         return self._calculate_total_productivity() * self.model.product_cost
 
     def _calculate_total_productivity(self) -> float:
-        return self.productivity_ratio * sum(
+        return sum(
             employee.productivity for employee in self.employees
         )
 
