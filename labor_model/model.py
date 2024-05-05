@@ -64,6 +64,7 @@ class LaborModel(mesa.Model):
 
         # https://uk.indeed.com/career-advice/pay-salary/salary-increase-changing-jobs-uk
         # Changing jobs results in around 10% salary increase
+        super().__init__()
 
         self.product_cost = settings.initial_product_cost
         self.company_operating_cost = settings.base_operating_cost
@@ -129,7 +130,14 @@ class LaborModel(mesa.Model):
 
         self.agent_id_iter = self.num_employees + self.num_companies
 
+        self.datacollector = mesa.DataCollector(
+            model_reporters={"Total Companies": lambda m: m.num_companies},  # Example reporter
+            # agent_reporters={"Happiness": "happiness"}  # Assuming agents have a happiness attribute
+        )
+
     def step(self):
+        self.datacollector.collect(self)
+
         logger.debug(f"Model step {self.schedule.steps}")
         if self.schedule.steps % 12 == 0:
             logger.info("Adjusting market shares")
