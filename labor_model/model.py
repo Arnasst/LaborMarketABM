@@ -141,7 +141,7 @@ class LaborModel(mesa.Model):
             (
                 company
                 for company in self.companies
-                if company.funds < 2000 and len(company.employees) == 0
+                if (company.funds < 2000 and len(company.employees) == 0) or (company.funds < 0)
             ),
             None,
         ):
@@ -149,6 +149,8 @@ class LaborModel(mesa.Model):
             logger.warning(f"Company #{self.agent_id_iter} takes over the market share")
             self.bankrupt_companies.append(bankrupt_company)
             self.companies.remove(bankrupt_company)
+            for bankrupt_employee in bankrupt_company.employees:
+                bankrupt_employee.change_work_state()
 
             company_available_products = int(
                 self.total_products * bankrupt_company.market_share
