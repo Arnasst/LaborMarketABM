@@ -17,6 +17,9 @@ class Settings(BaseSettings):
 
     quitting_multiplier: float = 0.25
 
+    company_fire_probability: float = 0.05
+    company_emergency_months: float = 1.5
+
     model_config = SettingsConfigDict(
         env_file=Path(Path(__file__).parent.parent, ".env"), env_file_encoding="utf-8"
     )

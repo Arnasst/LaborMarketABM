@@ -82,26 +82,37 @@ def group_elements(data: list[dict]):
 def form_all_setting_variations(settings: Settings) -> list[Settings]:
     setting_variations = []
 
-    operating_cost_range = range(70, 90, 3)
-    for i in operating_cost_range:
+    # operating_cost_range = range(70, 90, 3)
+    # for i in operating_cost_range:
+    #     i_setting = settings.model_copy()
+    #     i_setting.base_operating_cost = i
+
+    quitting_multiplier_range = range(20, 30, 1) # Divided later by 100
+    for i in quitting_multiplier_range:
         i_setting = settings.model_copy()
-        i_setting.base_operating_cost = i
+        i_setting.quitting_multiplier = i / 100
 
-        quitting_multiplier_range = range(25, 35, 2) # Divided later by 10
-        for y in quitting_multiplier_range:
-            y_setting = i_setting.model_copy()
-            y_setting.quitting_multiplier = y / 100
+        firing_prob_range = range(5, 50, 5)
+        for j in firing_prob_range:
+            j_setting = i_setting.model_copy()
+            j_setting.company_fire_probability = j / 100
 
-            product_cost_range = range(220, 230, 2)
-            for z in product_cost_range:
-                z_setting = y_setting.model_copy()
-                z_setting.initial_product_cost = z
+            emergency_months_range = range(10, 30, 2) # Divided later by 10
+            for k in emergency_months_range:
+                k_setting = j_setting.model_copy()
+                k_setting.company_emergency_months = k / 10
+                setting_variations.append(k_setting)
 
-                hiring_cost_range = range(1300, 1700, 100)
-                for x in hiring_cost_range:
-                    x_setting = z_setting.model_copy()
-                    x_setting.cost_per_hire = x
-                    setting_variations.append(x_setting)
+    # product_cost_range = range(220, 230, 2)
+    # for z in product_cost_range:
+    #     z_setting = y_setting.model_copy()
+    #     z_setting.initial_product_cost = z
+
+    #     hiring_cost_range = range(1300, 1700, 100)
+    #     for x in hiring_cost_range:
+    #         x_setting = z_setting.model_copy()
+    #         x_setting.cost_per_hire = x
+    #         setting_variations.append(x_setting)
 
     return setting_variations
 
@@ -113,8 +124,8 @@ def main() -> None:
     setting_variations = form_all_setting_variations(settings)
 
     parameters = {
-        "num_employees": range(80, 100, 5),
-        "num_companies": range(9, 13),
+        "num_employees": 95,
+        "num_companies": 9,
         "settings": setting_variations,
         "llm_based": False,
         "open_ai_client": None

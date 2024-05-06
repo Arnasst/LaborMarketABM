@@ -19,13 +19,13 @@ class CompanyAgent(CompanyAgentBase):
         monthly_earnings: float,
         total_productivity: float,
     ) -> bool:
-        if self.funds < self._calculate_monthly_expenses() * 1.5:
+        if self.funds < self._calculate_monthly_expenses() * self.model.company_emergency_months:
             return True
         if (
             monthly_employee_cost > monthly_earnings
             or total_productivity > self.available_sellable_products_count
         ):
-            return random() < 0.05
+            return random() < self.model.company_fire_probability
         return False
 
     def _contemplate_hiring(self, total_productivity: float) -> bool:

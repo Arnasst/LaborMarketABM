@@ -50,6 +50,8 @@ class LaborModel(mesa.Model):
         self.initial_salary = settings.initial_salary
         self.changing_jobs_raise = settings.changing_jobs_raise
         self.quitting_multiplier = settings.quitting_multiplier
+        self.company_fire_probability = settings.company_fire_probability
+        self.company_emergency_months = settings.company_emergency_months
 
         self.total_products = (
             num_employees * AVERAGE_PRODUCTIVITY * JOBS_TO_EMPLOYEES_RATIO
