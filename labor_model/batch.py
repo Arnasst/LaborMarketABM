@@ -11,15 +11,15 @@ def sort_closest_groups(groups: list[list[dict]]):
     EXPECTED_UNEMPLOYMENT = 0.067
     AVERAGE_TENURE = 29
     TIME_BETWEEN_JOBS = 2
-    # CHANGE_REASON_QUIT = 0.6
+    CHANGE_REASON_QUIT = 0.6
 
     def calculate_error(group: dict) -> float:
         unemployment_error = abs(group['average_unemployment_rate'] - EXPECTED_UNEMPLOYMENT) / EXPECTED_UNEMPLOYMENT
         tenure_error = abs(group['average_work_tenure'] - AVERAGE_TENURE) / AVERAGE_TENURE
-        # time_between_jobs_error = abs(group['average_time_between_jobs'] - TIME_BETWEEN_JOBS)
-        # quit_error = abs(group['average_quit_rate'] - CHANGE_REASON_QUIT)
+        time_between_jobs_error = abs(group['average_time_between_jobs'] - TIME_BETWEEN_JOBS) / TIME_BETWEEN_JOBS
+        quit_error = abs(group['average_quit_rate'] - CHANGE_REASON_QUIT) / CHANGE_REASON_QUIT
 
-        return unemployment_error + tenure_error
+        return unemployment_error + tenure_error + time_between_jobs_error + quit_error
 
     sorted_groups = sorted(groups, key=calculate_error)
 
@@ -38,6 +38,12 @@ def calculate_group_statistics(groups: list[list[dict]]):
         total_tenure = sum(item['Average Work Tenure'] for item in group)
         average_tenure = round(total_tenure / len(group), 2)
 
+        total_time_between_jobs = sum(item['Average Time Between Jobs'] for item in group)
+        average_time_between_jobs = round(total_time_between_jobs / len(group), 2)
+
+        total_average_quit_rate = sum(item['Average Quit Rate'] for item in group)
+        average_quit_rate = round(total_average_quit_rate / len(group), 2)
+
         group_settings = group[0]['settings']
         group_info = {
             'num_companies': group[0]['num_companies'],
@@ -51,7 +57,9 @@ def calculate_group_statistics(groups: list[list[dict]]):
             'quitting_multiplier': group_settings.quitting_multiplier,
             'average_unemployment_rate': average_unemployment_rate,
             "average_work_tenure": average_tenure,
-            "average_company_profits": average_profits
+            "average_time_between_jobs": average_time_between_jobs,
+            "average_quit_rate": average_quit_rate,
+            # "average_company_profits": average_profits
         }
 
         statistics.append(group_info)
@@ -114,7 +122,7 @@ def main() -> None:
 
     grouped_results = group_elements(results)
     group_stats = calculate_group_statistics(grouped_results)
-    filtered_groups = sort_closest_groups(group_stats)[:3]
+    filtered_groups = sort_closest_groups(group_stats)[:5]
     pprint(filtered_groups)
 
 if __name__ == "__main__":
