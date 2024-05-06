@@ -52,11 +52,20 @@ def ask_which_to_hire(client: OpenAI, funds: int, applicants: list[Application])
     )
     response_content = response.choices[0].message.content
     logger.debug(f"Question: '{user_prompt}'.\nAnswer: '{response_content}'")
-    employee_id = int(response_content[response_content.find("#")+1:])
+    response_content = response_content.replace(".", "")
+
+    try:
+        employee_id_str = response_content[response_content.find("#")+1:]
+        employee_id = [int(s) for s in employee_id_str.split() if s.isdigit()][0]
+    except:
+        logger.warning(f"Failed to parse application id from response: '{response_content}'")
+        employee_id = [int(s) for s in response_content.split() if s.isdigit()][0]
+
     try:
         application = next(a for a in applicants if a.employee.unique_id == employee_id)
     except StopIteration:
-        application = applicants[employee_id % len(applicants)]
+        logger.warning(f"Failed to find application: '{response_content}'")
+        application = applicants[(employee_id - 1) % len(applicants)]
     return application
 
 def ask_which_to_fire(client: OpenAI, employees: list[EmployeeAgent]) -> EmployeeAgent:
@@ -70,9 +79,17 @@ def ask_which_to_fire(client: OpenAI, employees: list[EmployeeAgent]) -> Employe
     )
     response_content = response.choices[0].message.content
     logger.debug(f"Question: '{LIST_WORKER_PROMPT}: {employees_list}'.\nAnswer: '{response_content}'")
-    employee_id = int(response_content[response_content.find("#")+1:])
+    response_content = response_content.replace(".", "")
+
+    try:
+        employee_id_str = response_content[response_content.find("#")+1:]
+        employee_id = [int(s) for s in employee_id_str.split() if s.isdigit()][0]
+    except:
+        logger.warning(f"Failed to parse employee id from response: '{response_content}'")
+        employee_id = [int(s) for s in response_content.split() if s.isdigit()][0]
+
     try:
         employee = next(e for e in employees if e.unique_id == employee_id)
     except StopIteration:
-        employee = employees[employee_id % len(employees)]
+        employee = employees[(employee_id - 1) % len(employees)]
     return employee

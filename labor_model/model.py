@@ -167,7 +167,7 @@ class LaborModel(mesa.Model):
             self.agent_id_iter += 1
 
         if self.llm_based:
-            sleep(1)
+            sleep(0.1)
 
     # [AVERAGE_PRODUCTIVITY - 1, AVERAGE_PRODUCTIVITY + 1]
     def _generate_employee_productivity_ratio(self) -> float:

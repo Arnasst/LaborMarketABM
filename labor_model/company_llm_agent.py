@@ -47,7 +47,11 @@ class CompanyLLMAgent(CompanyAgentBase):
         selling_all = total_productivity < self.available_sellable_products_count
 
         if self.previous_decision != Decision.HIRE:
-            employment_decision = ask_about_employee_count(self.open_ai, self.funds, selling_all, monthly_earnings, monthly_operating_cost)
+            try:
+                employment_decision = ask_about_employee_count(self.open_ai, self.funds, selling_all, monthly_earnings, monthly_operating_cost)
+            except Exception as e:
+                logger.error(f"Company #{self.unique_id}: Error asking about employee count. {str(e)}")
+                employment_decision = Decision.NOTHING
         else:
             employment_decision = Decision.HIRE
         logger.debug(f"Company #{self.unique_id}: Employment decision: {employment_decision}")
@@ -56,13 +60,24 @@ class CompanyLLMAgent(CompanyAgentBase):
         if employment_decision == Decision.HIRE:
             self.accepting_applications = True
             if self.applications:
-                best_application = self._choose_best_application()
-                if self._hire_applicant(best_application):
+                try:
+                    best_application = self._choose_best_application()
+                except Exception as e:
+                    logger.error(f"Company #{self.unique_id}: Error choosing best application. {str(e)}")
+                    best_application = None
+
+                if best_application and self._hire_applicant(best_application):
                     self.accepting_applications = False
                     self.previous_decision = Decision.NOTHING
         elif employment_decision == Decision.FIRE:
-            worst_employee = self._choose_who_to_fire()
-            self._fire_employee(worst_employee)
+            try:
+                worst_employee = self._choose_who_to_fire()
+            except Exception as e:
+                logger.error(f"Company #{self.unique_id}: Error choosing who to fire. {str(e)}")
+                worst_employee = None
+
+            if worst_employee:
+                self._fire_employee(worst_employee)
             self.accepting_applications = False
 
         self.applications = []
