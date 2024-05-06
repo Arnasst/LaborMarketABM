@@ -30,7 +30,7 @@ def calculate_group_statistics(groups: list[list[dict]]):
 
     for group in groups:
         total_unemployment_rate = sum(item['Unemployment Rate'] for item in group)
-        average_unemployment_rate = round(total_unemployment_rate / len(group), 2)
+        average_unemployment_rate = round(total_unemployment_rate / len(group), 3)
 
         total_profits = sum(item['Company Profit Average'] for item in group)
         average_profits = round(total_profits / len(group), 2)
@@ -82,22 +82,22 @@ def group_elements(data: list[dict]):
 def form_all_setting_variations(settings: Settings) -> list[Settings]:
     setting_variations = []
 
-    operating_cost_range = range(80, 150, 10)
+    operating_cost_range = range(70, 90, 3)
     for i in operating_cost_range:
         i_setting = settings.model_copy()
         i_setting.base_operating_cost = i
 
-        quitting_multiplier_range = range(30, 70, 10) # Divided later by 10
+        quitting_multiplier_range = range(25, 35, 2) # Divided later by 10
         for y in quitting_multiplier_range:
             y_setting = i_setting.model_copy()
             y_setting.quitting_multiplier = y / 100
 
-            product_cost_range = range(210, 240, 5)
+            product_cost_range = range(220, 230, 2)
             for z in product_cost_range:
                 z_setting = y_setting.model_copy()
                 z_setting.initial_product_cost = z
 
-                hiring_cost_range = range(1300, 2500, 200)
+                hiring_cost_range = range(1300, 1700, 100)
                 for x in hiring_cost_range:
                     x_setting = z_setting.model_copy()
                     x_setting.cost_per_hire = x
@@ -114,7 +114,7 @@ def main() -> None:
 
     parameters = {
         "num_employees": range(80, 100, 5),
-        "num_companies": range(11, 14),
+        "num_companies": range(9, 13),
         "settings": setting_variations,
         "llm_based": False,
         "open_ai_client": None
