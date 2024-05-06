@@ -67,6 +67,7 @@ class CompanyLLMAgent(CompanyAgentBase):
                     best_application = None
 
                 if best_application and self._hire_applicant(best_application):
+                    self.applications = []
                     self.accepting_applications = False
                     self.previous_decision = Decision.NOTHING
         elif employment_decision == Decision.FIRE:
