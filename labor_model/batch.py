@@ -7,6 +7,16 @@ from labor_model.config import Settings
 from labor_model.model import LaborModel
 from labor_model.local_logging import logger
 
+def sort_closest_groups(groups: list[list[dict]]):
+    EXPECTED_UNEMPLOYMENT = 0.067
+    AVERAGE_TENURE = 29
+    TIME_BETWEEN_JOBS = 2
+    # CHANGE_REASON_QUIT = 0.6
+
+    sorted_groups = sorted(groups, key=lambda group: abs(group['average_unemployment_rate'] - EXPECTED_UNEMPLOYMENT))
+
+    return sorted_groups
+
 def calculate_group_statistics(groups: list[list[dict]]):
     statistics = []
 
@@ -65,12 +75,10 @@ def main() -> None:
 
     settings = Settings()
 
-    NUM_EMPLOYEES = 150
-
     setting_variations = form_all_setting_variations(settings)
 
     parameters = {
-        "num_employees": NUM_EMPLOYEES,
+        "num_employees": [150],
         "num_companies": [10, 20],
         "settings": setting_variations,
         "llm_based": False,
@@ -81,14 +89,15 @@ def main() -> None:
         model_cls=LaborModel,
         parameters=parameters,
         number_processes=None,
-        iterations=2,
+        iterations=10,
         max_steps=60,
         display_progress=True
     )
 
     grouped_results = group_elements(results)
     group_stats = calculate_group_statistics(grouped_results)
-    pprint(group_stats)
+    filtered_groups = sort_closest_groups(group_stats)[:3]
+    pprint(filtered_groups)
 
 if __name__ == "__main__":
     main()
