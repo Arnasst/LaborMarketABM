@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     changing_jobs_raise: float = 1.15
 
-    initial_employment_rate: float = 0.95
+    initial_employment_rate: float = 0.94
 
     quitting_multiplier: float = 0.5
 
