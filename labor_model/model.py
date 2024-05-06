@@ -151,6 +151,7 @@ class LaborModel(mesa.Model):
             self.companies.remove(bankrupt_company)
             for bankrupt_employee in bankrupt_company.employees:
                 bankrupt_employee.change_work_state()
+            bankrupt_company.employees = []
 
             company_available_products = int(
                 self.total_products * bankrupt_company.market_share
