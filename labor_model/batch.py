@@ -82,17 +82,21 @@ def group_elements(data: list[dict]):
 def form_all_setting_variations(settings: Settings) -> list[Settings]:
     setting_variations = []
 
-    operating_cost_range = range(50, 70, 10)
+    operating_cost_range = range(100, 201, 50)
     for i in operating_cost_range:
         new_setting = settings.model_copy()
         new_setting.base_operating_cost = i
-        setting_variations.append(new_setting)
 
-    quitting_multiplier_range = range(1, 10, 1) # Divided later by 10
-    for i in quitting_multiplier_range:
-        new_setting = settings.model_copy()
-        new_setting.quitting_multiplier = i / 10
-        setting_variations.append(new_setting)
+        quitting_multiplier_range = range(2, 10, 3) # Divided later by 10
+        for i in quitting_multiplier_range:
+            new_setting = settings.model_copy()
+            new_setting.quitting_multiplier = i / 10
+
+            product_cost_range = range(200, 250, 10)
+            for i in product_cost_range:
+                new_setting = settings.model_copy()
+                new_setting.initial_product_cost = i
+                setting_variations.append(new_setting)
 
     return setting_variations
 
@@ -104,8 +108,8 @@ def main() -> None:
     setting_variations = form_all_setting_variations(settings)
 
     parameters = {
-        "num_employees": [150],
-        "num_companies": [10, 20],
+        "num_employees": range(50, 150, 10),
+        "num_companies": range(10, 20),
         "settings": setting_variations,
         "llm_based": False,
         "open_ai_client": None
