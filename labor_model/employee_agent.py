@@ -90,14 +90,9 @@ class EmployeeAgent(mesa.Agent):
                 self.time_in_state += 1
 
     def _contemplate_working(self):
-        search_probability = search_probability_f.cdf(self.time_in_state)
-        logger.debug(
-            f"Employee #{self.unique_id} search probability: {search_probability}"
-        )
-        if True: # decide_based_on_probability(search_probability):
-            selected_company = self._select_company()
-            if selected_company:
-                self._apply_to_company(selected_company)
+        selected_company = self._select_company()
+        if selected_company:
+            self._apply_to_company(selected_company)
 
     def _select_company(self):
         hiring_companies = list(
@@ -116,11 +111,7 @@ class EmployeeAgent(mesa.Agent):
         company.applications.append(Application(self, desired_salary))
 
     def _contemplate_leaving(self) -> bool:
-        # Divide by two because employee can leave or company can fire
         leave_probability = leave_probability_f.pdf(self.time_in_state) * self.model.quitting_multiplier
-        logger.debug(
-            f"Employee #{self.unique_id} leave probability: {leave_probability}"
-        )
         if decide_based_on_probability(leave_probability):
             logger.warning(
                 f"Employee #{self.unique_id} left company #{self.employer_id}"
