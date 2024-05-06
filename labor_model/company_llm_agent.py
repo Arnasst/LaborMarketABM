@@ -4,7 +4,7 @@ import mesa
 from openai import OpenAI
 
 from labor_model.company_agent_base import CompanyAgentBase
-from labor_model.employee_agent import Application
+from labor_model.employee_agent import Application, EmployeeAgent
 from labor_model.llm_deciding import Decision, ask_about_employee_count
 from labor_model.local_logging import logger
 
@@ -18,7 +18,6 @@ class CompanyLLMAgent(CompanyAgentBase):
         unique_id: int,
         model: mesa.Model,
         market_share: float,
-        productivity_ratio: float,
         available_sellable_products_count: int,
         funds: int,
         open_ai: OpenAI,
@@ -27,7 +26,6 @@ class CompanyLLMAgent(CompanyAgentBase):
             unique_id,
             model,
             market_share,
-            productivity_ratio,
             available_sellable_products_count,
             funds,
         )
@@ -71,5 +69,5 @@ class CompanyLLMAgent(CompanyAgentBase):
     def _choose_best_application(self) -> Application:
         logger.debug(f"Company #{self.unique_id}: Choosing best application")
 
-    def _choose_who_to_fire(self) -> bool:
+    def _choose_who_to_fire(self) -> EmployeeAgent:
         logger.debug(f"Company #{self.unique_id}: Choosing who to fire")

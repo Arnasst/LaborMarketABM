@@ -89,7 +89,7 @@ class CompanyAgentBase(mesa.Agent):
         )
         self._fire_employee(least_efficient_employee)
 
-    def _fire_employee(self, employee):
+    def _fire_employee(self, employee: EmployeeAgent):
         self.model.fire_count += 1
         self.employees.remove(employee)
         logger.info(

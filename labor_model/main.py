@@ -12,38 +12,38 @@ from labor_model.stats import StepStatsCalculator, print_company_stats, print_em
 
 
 def main():
-    logger.setLevel(logging.WARNING)
+    logger.setLevel(logging.DEBUG)
     settings = Settings()
 
     # To fix the results
     # seed(1)
     # np_seed(1)
 
-    NUM_EMPLOYEES = 150
-    NUM_COMPANIES = 10
-    llm_based = False
-    open_ai_client = OpenAI(settings.open_ai_key) if llm_based else None
+    NUM_EMPLOYEES = 5
+    NUM_COMPANIES = 1
+    llm_based = True
+    open_ai_client = OpenAI(api_key=settings.open_ai_key) if llm_based else None
     model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, settings, llm_based, open_ai_client)
     stats = StepStatsCalculator(model)
 
-    MODEL_STEPS = 120
+    MODEL_STEPS = 5
     for _ in range(MODEL_STEPS):
         model.step()
         stats.step()
 
-    profits = stats.get_total_profits()
-    print_company_stats(model.companies, profits)
-    print(f"Unemployment rates: {stats.unemployment_rates}")
+    # profits = stats.get_total_profits()
+    # print_company_stats(model.companies, profits)
+    # print(f"Unemployment rates: {stats.unemployment_rates}")
 
-    # print(f"Wage stats: {stats.wage_stats}")
-    # print(f"Total funds: {stats.total_funds}")
-    # print(f"Fill rates: {stats.product_fill_rates}")
-    print_unemployment_stats(stats.unemployment_rates)
-    print_employee_stats(model.employees)
+    # # print(f"Wage stats: {stats.wage_stats}")
+    # # print(f"Total funds: {stats.total_funds}")
+    # # print(f"Fill rates: {stats.product_fill_rates}")
+    # print_unemployment_stats(stats.unemployment_rates)
+    # print_employee_stats(model.employees)
 
-    change_count = model.quit_count + model.fire_count
-    print(f"Quit percentage: {model.quit_count / change_count:.2}")
-    print(f"Fire percentage: {model.fire_count / change_count:.2}")
+    # change_count = model.quit_count + model.fire_count
+    # print(f"Quit percentage: {model.quit_count / change_count:.2}")
+    # print(f"Fire percentage: {model.fire_count / change_count:.2}")
 
 
 if __name__ == "__main__":

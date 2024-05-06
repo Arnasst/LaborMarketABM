@@ -5,6 +5,7 @@ import numpy as np
 from openai import OpenAI
 
 from labor_model.company_agent import CompanyAgent
+from labor_model.company_llm_agent import CompanyLLMAgent
 from labor_model.config import Settings
 from labor_model.employee_agent import EmployeeAgent, Seniority
 from labor_model.local_logging import logger
@@ -35,30 +36,6 @@ class LaborModel(mesa.Model):
         llm_based: bool = False,
         open_ai_client: OpenAI | None = None,
     ):
-        # Worksim model
-
-        # µ0 Average base hourly production for blue collar jobs 4.92
-        # µ1 Average base hourly production for middle level jobs 5.53
-        # µ2 Average base hourly production for manager jobs 6.88
-
-        # µΨ0 Average demand share allocated to blue collar jobs 33.5%
-        # µΨ1 Average demand share allocated to middle level jobs 28.1%
-        # µΨ2 Average demand share allocated to manager jobs 38.4%
-
-        # Required level of seniority for a promotion (in weeks) 556
-
-        # Average monthly salary - blue collar/employee 15-24 yr (euros) 1336 1158
-        # Average monthly salary - blue collar/employee 25-49 yr (euros) 1624 1416
-        # Average monthly salary - blue collar/employee 50-64 yr (euros) 1724 1904
-        # Average monthly salary - middle level job 15-24 yr (euros) 1603 1200
-        # Average monthly salary - middle level job 25-49 yr (euros) 2143 1835
-        # Average monthly salary - middle level job 50-64 yr (euros) 2496 2822
-        # Average monthly salary - manager 15-24 yr (euros) 2079 1363
-        # Average monthly salary - manager 25-49 yr (euros) 3558 2935
-        # Average monthly salary - manager 50-64 yr (euros) 4485 4782
-
-        # Share of the base productivity value kept by the firm 0.71
-
         # https://www.payscale.com/content/report/2024-compensation-best-practice-report.pdf
         # 3% is the average base pay increase predicted for 2024
         # 6% more jobs than employees
@@ -96,13 +73,23 @@ class LaborModel(mesa.Model):
             )
             company_funds = company_available_products * self.product_cost * 3
 
-            c = CompanyAgent(
-                i,
-                self,
-                initial_market_shares[i],
-                company_available_products,
-                company_funds,
-            )
+            if llm_based:
+                c = CompanyLLMAgent(
+                    i,
+                    self,
+                    initial_market_shares[i],
+                    company_available_products,
+                    company_funds,
+                    open_ai_client
+                )
+            else:
+                c = CompanyAgent(
+                    i,
+                    self,
+                    initial_market_shares[i],
+                    company_available_products,
+                    company_funds,
+                )
             self.companies.append(c)
             self.schedule.add(c)
 
