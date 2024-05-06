@@ -19,14 +19,14 @@ def main():
     # seed(1)
     # np_seed(1)
 
-    NUM_EMPLOYEES = 5
+    NUM_EMPLOYEES = 10
     NUM_COMPANIES = 1
     llm_based = True
     open_ai_client = OpenAI(api_key=settings.open_ai_key) if llm_based else None
     model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, settings, llm_based, open_ai_client)
     stats = StepStatsCalculator(model)
 
-    MODEL_STEPS = 2
+    MODEL_STEPS = 6
     for _ in range(MODEL_STEPS):
         model.step()
         stats.step()

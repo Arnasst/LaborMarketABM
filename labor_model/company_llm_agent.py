@@ -43,10 +43,13 @@ class CompanyLLMAgent(CompanyAgentBase):
 
         self.funds -= monthly_operating_cost
         self.funds += monthly_earnings
-        selling_all = total_productivity >= self.available_sellable_products_count
+        logger.debug(f"Company #{self.unique_id}: Total productivity: {total_productivity:.2f}. Available sellable products: {self.available_sellable_products_count}.")
+        selling_all = total_productivity < self.available_sellable_products_count
 
         if self.previous_decision != Decision.HIRE:
             employment_decision = ask_about_employee_count(self.open_ai, self.funds, selling_all, monthly_earnings, monthly_operating_cost)
+        else:
+            employment_decision = Decision.HIRE
         logger.debug(f"Company #{self.unique_id}: Employment decision: {employment_decision}")
         self.previous_decision = employment_decision
 
@@ -54,9 +57,9 @@ class CompanyLLMAgent(CompanyAgentBase):
             self.accepting_applications = True
             if self.applications:
                 best_application = self._choose_best_application()
-                self._hire_applicant(best_application)
-                self.accepting_applications = False
-                self.previous_decision = Decision.NOTHING
+                if self._hire_applicant(best_application):
+                    self.accepting_applications = False
+                    self.previous_decision = Decision.NOTHING
         elif employment_decision == Decision.FIRE:
             worst_employee = self._choose_who_to_fire()
             self._fire_employee(worst_employee)

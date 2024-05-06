@@ -1,4 +1,5 @@
 from random import random
+from time import sleep
 
 import mesa
 import numpy as np
@@ -43,6 +44,8 @@ class LaborModel(mesa.Model):
         # https://uk.indeed.com/career-advice/pay-salary/salary-increase-changing-jobs-uk
         # Changing jobs results in around 10% salary increase
         super().__init__()
+
+        self.llm_based = llm_based
 
         self.product_cost = settings.initial_product_cost
         self.company_operating_cost = settings.base_operating_cost
@@ -160,6 +163,9 @@ class LaborModel(mesa.Model):
             )
             self.companies.append(new_company)
             self.agent_id_iter += 1
+
+        if self.llm_based:
+            sleep(1)
 
     # [AVERAGE_PRODUCTIVITY - 1, AVERAGE_PRODUCTIVITY + 1]
     def _generate_employee_productivity_ratio(self) -> float:
