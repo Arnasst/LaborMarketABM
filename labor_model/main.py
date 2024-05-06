@@ -26,7 +26,7 @@ def main():
     model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, settings, llm_based, open_ai_client)
     stats = StepStatsCalculator(model)
 
-    MODEL_STEPS = 5
+    MODEL_STEPS = 2
     for _ in range(MODEL_STEPS):
         model.step()
         stats.step()

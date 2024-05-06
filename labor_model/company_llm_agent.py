@@ -1,5 +1,3 @@
-from random import random
-
 import mesa
 from openai import OpenAI
 
@@ -37,19 +35,17 @@ class CompanyLLMAgent(CompanyAgentBase):
         logger.info(f"Company #{self.unique_id} step. Funds: {self.funds:.2f}. ")
 
         total_productivity = self._calculate_total_productivity()
-        monthly_employee_cost = sum(
-            employee.current_salary for employee in self.employees
-        )
+        monthly_operating_cost = self._calculate_monthly_expenses()
         monthly_earnings = self._calculate_earnings()
         logger.info(
-            f"Company #{self.unique_id} monthly earnings: {monthly_earnings:.2f}. Monthly employee cost: {monthly_employee_cost:.2f}."
+            f"Company #{self.unique_id} monthly earnings: {monthly_earnings:.2f}. Monthly employee cost: {monthly_operating_cost:.2f}."
         )
 
-        self.funds -= monthly_employee_cost
+        self.funds -= monthly_operating_cost
         self.funds += monthly_earnings
         selling_all = total_productivity >= self.available_sellable_products_count
 
-        employment_decision = ask_about_employee_count(self.open_ai, self.funds, selling_all)
+        employment_decision = ask_about_employee_count(self.open_ai, self.funds, selling_all, monthly_earnings, monthly_operating_cost)
         logger.debug(f"Company #{self.unique_id}: Employment decision: {employment_decision}")
         self.step_decision = employment_decision
 
