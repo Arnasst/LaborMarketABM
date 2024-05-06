@@ -13,7 +13,15 @@ def sort_closest_groups(groups: list[list[dict]]):
     TIME_BETWEEN_JOBS = 2
     # CHANGE_REASON_QUIT = 0.6
 
-    sorted_groups = sorted(groups, key=lambda group: abs(group['average_unemployment_rate'] - EXPECTED_UNEMPLOYMENT))
+    def calculate_error(group: dict) -> float:
+        unemployment_error = abs(group['average_unemployment_rate'] - EXPECTED_UNEMPLOYMENT) / EXPECTED_UNEMPLOYMENT
+        tenure_error = abs(group['average_work_tenure'] - AVERAGE_TENURE) / AVERAGE_TENURE
+        # time_between_jobs_error = abs(group['average_time_between_jobs'] - TIME_BETWEEN_JOBS)
+        # quit_error = abs(group['average_quit_rate'] - CHANGE_REASON_QUIT)
+
+        return unemployment_error + tenure_error
+
+    sorted_groups = sorted(groups, key=calculate_error)
 
     return sorted_groups
 
@@ -27,6 +35,9 @@ def calculate_group_statistics(groups: list[list[dict]]):
         total_profits = sum(item['Company Profit Average'] for item in group)
         average_profits = round(total_profits / len(group), 2)
 
+        total_tenure = sum(item['Average Work Tenure'] for item in group)
+        average_tenure = round(total_tenure / len(group), 2)
+
         group_settings = group[0]['settings']
         group_info = {
             'num_companies': group[0]['num_companies'],
@@ -39,6 +50,7 @@ def calculate_group_statistics(groups: list[list[dict]]):
             'initial_employment_rate': group_settings.initial_employment_rate,
             'quitting_multiplier': group_settings.quitting_multiplier,
             'average_unemployment_rate': average_unemployment_rate,
+            "average_work_tenure": average_tenure,
             "average_company_profits": average_profits
         }
 
@@ -66,6 +78,12 @@ def form_all_setting_variations(settings: Settings) -> list[Settings]:
     for i in operating_cost_range:
         new_setting = settings.model_copy()
         new_setting.base_operating_cost = i
+        setting_variations.append(new_setting)
+
+    quitting_multiplier_range = range(1, 10, 1) # Divided later by 10
+    for i in quitting_multiplier_range:
+        new_setting = settings.model_copy()
+        new_setting.quitting_multiplier = i / 10
         setting_variations.append(new_setting)
 
     return setting_variations

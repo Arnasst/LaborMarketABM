@@ -23,6 +23,7 @@ class StepStatsCollector(DataCollector):
         super().__init__(
             model_reporters={
                 "Unemployment Rate": lambda m: round(self.calculate_unemployment_rate(), 2),
+                "Average Work Tenure": lambda m: round(self.calculate_average_tenure(), 2),
                 # "Wage Stats": self.calculate_wage_stats,
                 # "Company Funds": self.get_company_funds,
                 # "Total Funds": lambda m: round(sum(self.get_company_funds()), 2),
@@ -33,14 +34,12 @@ class StepStatsCollector(DataCollector):
         )
         self.model = model
 
-    def get_total_profits(self):
-        company_starting_funds = self.company_funds[0]
-        company_ending_funds = self.company_funds[-1]
-        total_profits = {}
-        for company in company_starting_funds:
-            if company in company_ending_funds:
-                total_profits[company] = (company_ending_funds[company] - company_starting_funds[company]) / company_starting_funds[company]
-        return total_profits
+    def calculate_average_tenure(self) -> float:
+        ended_work_records = [wr for e in self.model.employees for wr in e.work_records if wr.to_time is not None]
+        if len(ended_work_records) == 0:
+            return 0
+        lenghts = calculate_work_lengths(ended_work_records)
+        return sum(lenghts) / len(lenghts)
 
     def calculate_average_profits(self) -> float:
         return sum((c.funds - c.starting_funds) / c.starting_funds for c in self.model.companies) / len(self.model.companies)
@@ -85,43 +84,3 @@ class StepStatsCollector(DataCollector):
 
 def calculate_work_lengths(all_ended_work_records: list[WorkRecord]) -> list[int]:
     return [r.to_time - r.from_time for r in all_ended_work_records]
-
-
-def calculate_time_between_jobs(
-    all_employee_work_records: list[list[WorkRecord]],
-) -> list[int]:
-    times_between_jobs = []
-    for work_records in all_employee_work_records:
-        for i in range(len(work_records) - 1):
-            times_between_jobs.append(
-                work_records[i + 1].from_time - work_records[i].to_time
-            )
-    return times_between_jobs
-
-
-def print_employee_stats(employees: list[EmployeeAgent]) -> None:
-    all_employee_work_records = [e.work_records for e in employees]
-    all_ended_work_records = [
-        r
-        for records in all_employee_work_records
-        for r in records
-        if r.to_time is not None
-    ]
-    work_lengths = calculate_work_lengths(all_ended_work_records)
-    time_between_jobs = calculate_time_between_jobs(all_employee_work_records)
-    print(f"Average work tenure: {sum(work_lengths) / len(work_lengths):.2f}")
-    print(f"Average time between jobs: {sum(time_between_jobs) / len(work_lengths):.2f}")
-
-def print_unemployment_stats(unemployment_rates: list[float]) -> None:
-    unemployment_average = sum(unemployment_rates) / len(unemployment_rates)
-    unemployment_deviation = sum(
-        (rate - unemployment_average) ** 2 for rate in unemployment_rates
-    ) / len(unemployment_rates)
-    print(f"Unemployment average: {unemployment_average:.2}")
-    print(f"Unemployment deviation: {unemployment_deviation:.2}")
-
-def print_company_stats(companies: list[CompanyAgent], profits: list[dict[int, float]]) -> None:
-    for company in companies:
-        if company.unique_id not in profits:
-            continue
-        print(f"Company {company.unique_id} \n\tprofit: {profits[company.unique_id]:.2}\n\tmarket share: {company.market_share:.2}\n\t")
