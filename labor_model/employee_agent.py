@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 
 import mesa
 from scipy.stats import dweibull, gamma
@@ -26,7 +26,7 @@ class Application:
     desired_salary: int
 
 
-class Seniority(StrEnum):
+class Seniority(Enum):
     JUNIOR = "junior"
     MIDDLE = "middle"
     SENIOR = "senior"

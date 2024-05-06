@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import Enum
 from openai import OpenAI
 from labor_model.employee_agent import Application, EmployeeAgent
 
@@ -12,7 +12,7 @@ FUNDS_PROMPT_F = lambda funds: f"We currently have {funds}$"
 
 HIRE_FIRE_QUESTION_PROMPT = "Should we hire more people, do nothing or fire someone?"
 
-class Decision(StrEnum):
+class Decision(Enum):
     HIRE = "Hire"
     FIRE = "Fire"
     NOTHING = "Nothing"
