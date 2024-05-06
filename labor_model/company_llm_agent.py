@@ -5,7 +5,7 @@ from openai import OpenAI
 
 from labor_model.company_agent_base import CompanyAgentBase
 from labor_model.employee_agent import Application, EmployeeAgent
-from labor_model.llm_deciding import Decision, ask_about_employee_count
+from labor_model.llm_deciding import Decision, ask_about_employee_count, ask_which_to_fire, ask_which_to_hire
 from labor_model.local_logging import logger
 
 
@@ -68,6 +68,8 @@ class CompanyLLMAgent(CompanyAgentBase):
 
     def _choose_best_application(self) -> Application:
         logger.debug(f"Company #{self.unique_id}: Choosing best application")
+        return ask_which_to_hire(self.open_ai, self.applications)
 
     def _choose_who_to_fire(self) -> EmployeeAgent:
         logger.debug(f"Company #{self.unique_id}: Choosing who to fire")
+        return ask_which_to_fire(self.open_ai, self.employees)
