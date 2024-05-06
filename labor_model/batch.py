@@ -11,7 +11,7 @@ def sort_closest_groups(groups: list[list[dict]]):
     EXPECTED_UNEMPLOYMENT = 0.067
     AVERAGE_TENURE = 29
     TIME_BETWEEN_JOBS = 2
-    CHANGE_REASON_QUIT = 0.6
+    CHANGE_REASON_QUIT = 0.65
 
     def calculate_error(group: dict) -> float:
         unemployment_error = abs(group['average_unemployment_rate'] - EXPECTED_UNEMPLOYMENT) / EXPECTED_UNEMPLOYMENT
@@ -51,15 +51,15 @@ def calculate_group_statistics(groups: list[list[dict]]):
             'initial_product_cost': group_settings.initial_product_cost,
             'base_operating_cost': group_settings.base_operating_cost,
             'cost_per_hire': group_settings.cost_per_hire,
-            'initial_salary': group_settings.initial_salary,
-            'changing_jobs_raise': group_settings.changing_jobs_raise,
-            'initial_employment_rate': group_settings.initial_employment_rate,
+            # 'initial_salary': group_settings.initial_salary,
+            # 'changing_jobs_raise': group_settings.changing_jobs_raise,
+            # 'initial_employment_rate': group_settings.initial_employment_rate,
             'quitting_multiplier': group_settings.quitting_multiplier,
             'average_unemployment_rate': average_unemployment_rate,
             "average_work_tenure": average_tenure,
             "average_time_between_jobs": average_time_between_jobs,
             "average_quit_rate": average_quit_rate,
-            # "average_company_profits": average_profits
+            "average_company_profits": average_profits
         }
 
         statistics.append(group_info)
@@ -82,21 +82,26 @@ def group_elements(data: list[dict]):
 def form_all_setting_variations(settings: Settings) -> list[Settings]:
     setting_variations = []
 
-    operating_cost_range = range(100, 201, 50)
+    operating_cost_range = range(90, 111, 10)
     for i in operating_cost_range:
         new_setting = settings.model_copy()
         new_setting.base_operating_cost = i
 
-        quitting_multiplier_range = range(2, 10, 3) # Divided later by 10
+        quitting_multiplier_range = range(45, 55, 1) # Divided later by 10
         for i in quitting_multiplier_range:
             new_setting = settings.model_copy()
-            new_setting.quitting_multiplier = i / 10
+            new_setting.quitting_multiplier = i / 100
 
-            product_cost_range = range(200, 250, 10)
+            product_cost_range = range(210, 230, 10)
             for i in product_cost_range:
                 new_setting = settings.model_copy()
                 new_setting.initial_product_cost = i
-                setting_variations.append(new_setting)
+
+                hiring_cost_range = range(1300, 2500, 200)
+                for i in hiring_cost_range:
+                    new_setting = settings.model_copy()
+                    new_setting.cost_per_hire = i
+                    setting_variations.append(new_setting)
 
     return setting_variations
 
@@ -108,8 +113,8 @@ def main() -> None:
     setting_variations = form_all_setting_variations(settings)
 
     parameters = {
-        "num_employees": range(50, 150, 30),
-        "num_companies": range(10, 20, 2),
+        "num_employees": range(80, 100, 10),
+        "num_companies": range(11, 13),
         "settings": setting_variations,
         "llm_based": False,
         "open_ai_client": None
@@ -120,7 +125,7 @@ def main() -> None:
         parameters=parameters,
         number_processes=None,
         iterations=10,
-        max_steps=60,
+        max_steps=120,
         display_progress=True
     )
 
