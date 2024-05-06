@@ -108,8 +108,8 @@ def main() -> None:
     setting_variations = form_all_setting_variations(settings)
 
     parameters = {
-        "num_employees": range(50, 150, 10),
-        "num_companies": range(10, 20),
+        "num_employees": range(50, 150, 30),
+        "num_companies": range(10, 20, 2),
         "settings": setting_variations,
         "llm_based": False,
         "open_ai_client": None
