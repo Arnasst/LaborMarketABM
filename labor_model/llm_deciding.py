@@ -40,9 +40,9 @@ def ask_about_employee_count(client: OpenAI, funds: int, selling_all: bool, earn
     response_content = response_content.replace(".", "")
     return Decision(response_content)
 
-def ask_which_to_hire(client: OpenAI, applicants: list[Application]) -> bool:
+def ask_which_to_hire(client: OpenAI, funds: int, applicants: list[Application]) -> bool:
     application_list = "; ".join(f"#{a.employee.unique_id} ({round(a.employee.productivity, 1)}, {int(a.desired_salary)})" for a in applicants)
-    user_prompt = f"{LIST_APPLICANTS_PROMPT}: {application_list}"
+    user_prompt = f"{FUNDS_PROMPT_F(funds)}. {LIST_APPLICANTS_PROMPT}: {application_list}"
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
         messages=[
