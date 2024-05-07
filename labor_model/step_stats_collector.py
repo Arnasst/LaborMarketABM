@@ -31,7 +31,9 @@ class StepStatsCollector(DataCollector):
                 # "Total Funds": lambda m: round(sum(self.get_company_funds()), 2),
                 # "Product Fill Rates": lambda m: round(self.get_companies_product_fill_rate(), 2),
                 # "Iterative Profits": self.calculate_profits,
-                "Company Profit Average": self.calculate_average_profits
+                "Company Profit Average": self.calculate_average_profits,
+                "Original Companies Left": lambda m: len(list(c for c in self.model.companies if c.unique_id < self.model.num_companies)),
+                "Original Company Profits": lambda m: sum((c.funds - c.starting_funds) / c.starting_funds for c in self.model.companies if c.unique_id < self.model.num_companies),
             }
         )
         self.model = model
