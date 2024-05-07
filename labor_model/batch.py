@@ -44,6 +44,12 @@ def calculate_group_statistics(groups: list[list[dict]]):
         total_average_quit_rate = sum(item['Average Quit Rate'] for item in group)
         average_quit_rate = round(total_average_quit_rate / len(group), 2)
 
+        total_original_companies_left = sum(item['Original Companies Left'] for item in group)
+        average_original_companies_left = round(total_original_companies_left / len(group), 2)
+
+        total_original_companies_profits = sum(item['Original Company Profits'] for item in group)
+        average_original_companies_profits = round(total_original_companies_profits / len(group), 2)
+
         group_settings = group[0]['settings']
         group_info = {
             'num_companies': group[0]['num_companies'],
@@ -59,7 +65,9 @@ def calculate_group_statistics(groups: list[list[dict]]):
             "average_work_tenure": average_tenure,
             "average_time_between_jobs": average_time_between_jobs,
             "average_quit_rate": average_quit_rate,
-            "average_company_profits": average_profits
+            "average_company_profits": average_profits,
+            "average_companies_left": average_original_companies_left,
+            "average_original_companies_profits": average_original_companies_profits,
         }
 
         statistics.append(group_info)
@@ -121,12 +129,12 @@ def main() -> None:
 
     settings = Settings()
 
-    setting_variations = form_all_setting_variations(settings)
+    # setting_variations = form_all_setting_variations(settings)
 
     parameters = {
         "num_employees": 95,
         "num_companies": 9,
-        "settings": setting_variations,
+        "settings": [settings],
         "llm_based": False,
         "open_ai_client": None
     }
@@ -135,7 +143,7 @@ def main() -> None:
         model_cls=LaborModel,
         parameters=parameters,
         number_processes=None,
-        iterations=10,
+        iterations=30,
         max_steps=120,
         display_progress=True
     )
