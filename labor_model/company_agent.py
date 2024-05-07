@@ -31,7 +31,7 @@ class CompanyAgent(CompanyAgentBase):
     def _contemplate_hiring(self, total_productivity: float) -> bool:
         average_salary = self._calculate_employee_average_salary()
         if (
-            self.funds > self.model.cost_per_hire + 2 * average_salary
+            self.funds > self.model.cost_per_hire + self.model.company_emergency_months * average_salary
             and total_productivity
             < self.available_sellable_products_count - AVERAGE_PRODUCTIVITY
         ):
