@@ -33,6 +33,10 @@ def main():
         model.step()
         stats.step()
 
+    successful_parses = sum(company.parses_succeeded for company in model.companies)
+    failed_parses = sum(company.parses_failed for company in model.companies)
+
+    print(f"Failed parses {failed_parses / (successful_parses + failed_parses)} out of {successful_parses + failed_parses}")
     profits = stats.get_total_profits()
     print_company_stats(model.companies, profits)
     print(f"Unemployment rates: {stats.unemployment_rates}")

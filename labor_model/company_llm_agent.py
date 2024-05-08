@@ -31,6 +31,9 @@ class CompanyLLMAgent(CompanyAgentBase):
         self.open_ai = open_ai
         self.previous_decision = Decision.NOTHING
 
+        self.parses_failed = 0
+        self.parses_succeeded = 0
+
     def step(self):
         logger.info(f"Company #{self.unique_id} step. Funds: {self.funds:.2f}. Decision: {self.previous_decision}.")
 
@@ -49,8 +52,10 @@ class CompanyLLMAgent(CompanyAgentBase):
         if self.previous_decision != Decision.HIRE:
             try:
                 employment_decision = ask_about_employee_count(self.open_ai, self.funds, selling_all, monthly_earnings, monthly_operating_cost)
+                self.parses_succeeded += 1
             except Exception as e:
                 logger.error(f"Company #{self.unique_id}: Error asking about employee count. {str(e)}")
+                self.parses_failed += 1
                 employment_decision = Decision.NOTHING
         else:
             employment_decision = Decision.HIRE
@@ -62,7 +67,9 @@ class CompanyLLMAgent(CompanyAgentBase):
             if self.applications:
                 try:
                     best_application = self._choose_best_application()
+                    self.parses_succeeded += 1
                 except Exception as e:
+                    self.parses_failed += 1
                     logger.error(f"Company #{self.unique_id}: Error choosing best application. {str(e)}")
                     best_application = None
 
@@ -73,9 +80,11 @@ class CompanyLLMAgent(CompanyAgentBase):
         elif employment_decision == Decision.FIRE:
             try:
                 worst_employee = self._choose_who_to_fire()
+                self.parses_succeeded += 1
             except Exception as e:
                 logger.error(f"Company #{self.unique_id}: Error choosing who to fire. {str(e)}")
                 worst_employee = None
+                self.parses_failed += 1
 
             if worst_employee:
                 self._fire_employee(worst_employee)
