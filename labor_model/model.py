@@ -99,6 +99,7 @@ class LaborModel(mesa.Model):
                 )
             self.companies.append(c)
             self.schedule.add(c)
+            self._place_agent(c)
 
         current_companies_idx = 0
         for i in range(self.num_companies, self.num_employees + self.num_companies):
@@ -178,6 +179,8 @@ class LaborModel(mesa.Model):
                     new_company_funds,
                 )
             self.companies.append(new_company)
+            self.schedule.add(new_company)
+            self._place_agent(new_company)
             self.agent_id_iter += 1
 
         if self.llm_based:
