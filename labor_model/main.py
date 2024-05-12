@@ -21,8 +21,6 @@ def main():
 
     NUM_EMPLOYEES = 95
     NUM_COMPANIES = 9
-    # NUM_EMPLOYEES = 95
-    # NUM_COMPANIES = 9
     llm_based = True
     open_ai_client = OpenAI(api_key=settings.open_ai_key) if llm_based else None
     model = LaborModel(NUM_EMPLOYEES, NUM_COMPANIES, settings, llm_based, open_ai_client)

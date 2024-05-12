@@ -45,6 +45,8 @@ class LaborModel(mesa.Model):
         # Changing jobs results in around 10% salary increase
         super().__init__()
 
+        self.grid = mesa.space.MultiGrid(10, 10, True)
+
         self.llm_based = llm_based
 
         self.product_cost = settings.initial_product_cost
@@ -104,6 +106,7 @@ class LaborModel(mesa.Model):
             e = EmployeeAgent(i, self, Seniority.JUNIOR, employee_productivity)
             self.employees.append(e)
             self.schedule.add(e)
+            self._place_agent(e)
 
             if current_companies_idx < len(self.companies):
                 current_company = self.companies[current_companies_idx]
@@ -219,3 +222,8 @@ class LaborModel(mesa.Model):
             if company.funds > 5000:
                 for employee in company.employees:
                     employee.current_salary *= 1 + INFLATION_RATE
+
+    def _place_agent(self, a: mesa.Agent) -> None:
+        x = self.random.randrange(self.grid.width)
+        y = self.random.randrange(self.grid.height)
+        self.grid.place_agent(a, (x, y))
