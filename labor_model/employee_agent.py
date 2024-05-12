@@ -79,6 +79,7 @@ class EmployeeAgent(mesa.Agent):
         self.current_salary = salary
 
     def step(self):
+        self.move()
         logger.debug(f"Employee #{self.unique_id} step")
         if not self.is_working:
             self._contemplate_working()
@@ -134,3 +135,26 @@ class EmployeeAgent(mesa.Agent):
         return round(
             previous_salary * (self.model.changing_jobs_raise - 0.01 * self.time_in_state)
         )
+
+    def move(self):
+        employer = next(
+            filter(lambda c: c.unique_id == self.employer_id, self.model.companies),
+            None,
+        )
+        if employer:
+            possible_steps = self.model.grid.get_neighborhood(
+                employer.pos, moore=True, include_center=False, radius=1
+            )
+            if self.pos not in possible_steps:
+                for position in possible_steps:
+                    if self.model.grid.is_cell_empty(position):
+                        self.model.grid.move_agent(self, position)
+                        return
+                more_steps = self.model.grid.get_neighborhood(
+                    employer.pos, moore=True, include_center=False, radius=2)
+                for position in more_steps:
+                    if self.model.grid.is_cell_empty(position):
+                        self.model.grid.move_agent(self, position)
+                        return
+
+

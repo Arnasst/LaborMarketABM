@@ -45,7 +45,7 @@ class LaborModel(mesa.Model):
         # Changing jobs results in around 10% salary increase
         super().__init__()
 
-        self.grid = mesa.space.MultiGrid(10, 10, True)
+        self.grid = mesa.space.MultiGrid(19, 19, True)
 
         self.llm_based = llm_based
 
@@ -99,7 +99,7 @@ class LaborModel(mesa.Model):
                 )
             self.companies.append(c)
             self.schedule.add(c)
-            self._place_agent(c)
+            self._place_company(c)
 
         current_companies_idx = 0
         for i in range(self.num_companies, self.num_employees + self.num_companies):
@@ -180,7 +180,7 @@ class LaborModel(mesa.Model):
                 )
             self.companies.append(new_company)
             self.schedule.add(new_company)
-            self._place_agent(new_company)
+            self._place_company(new_company)
             self.agent_id_iter += 1
 
         if self.llm_based:
@@ -230,3 +230,12 @@ class LaborModel(mesa.Model):
         x = self.random.randrange(self.grid.width)
         y = self.random.randrange(self.grid.height)
         self.grid.place_agent(a, (x, y))
+
+    def _place_company(self, a: CompanyAgent) -> None:
+        X = [2, 9, 16]
+        Y = [2, 9, 16]
+        for y in Y:
+            for x in X:
+                if self.grid.is_cell_empty((x, y)):
+                    self.grid.place_agent(a, (x, y))
+                    return
