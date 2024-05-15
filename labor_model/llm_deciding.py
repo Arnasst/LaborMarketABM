@@ -3,6 +3,8 @@ from openai import OpenAI
 from labor_model.employee_agent import Application, EmployeeAgent
 from labor_model.local_logging import logger
 
+# MODEL = "gpt-3.5-turbo-0125"
+MODEL = "gpt-4o"
 
 HR_HIRE_FIRE_PROMPT = "You are an HR assistant. Hiring costs 1500. Your answers to each question should be 'Hire', 'Fire' or 'Nothing'."
 SELLING_ALL_PROMPT = "We are selling all products that we produce"
@@ -26,7 +28,7 @@ def ask_about_employee_count(client: OpenAI, funds: int, selling_all: bool, earn
     selling_prompt = SELLING_ALL_PROMPT if selling_all else PRODUCING_TOO_MUCH_PROMPT
     user_prompt = f"{FUNDS_PROMPT_F(funds)}. {EARN_SPEND_PROMPT_F(earned, spent)}. {selling_prompt}. {HIRE_FIRE_QUESTION_PROMPT}"
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=MODEL,
         messages=[
             {"role": "system", "content": HR_HIRE_FIRE_PROMPT},
             {
@@ -44,7 +46,7 @@ def ask_which_to_hire(client: OpenAI, funds: int, applicants: list[Application])
     application_list = "; ".join(f"#{a.employee.unique_id} ({round(a.employee.productivity, 1)}, {int(a.desired_salary)})" for a in applicants)
     user_prompt = f"{FUNDS_PROMPT_F(funds)}. {LIST_APPLICANTS_PROMPT}: {application_list}"
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=MODEL,
         messages=[
             {"role": "system", "content": HR_CHOOSE_PROMPT},
             {"role": "user", "content": user_prompt},
@@ -71,7 +73,7 @@ def ask_which_to_hire(client: OpenAI, funds: int, applicants: list[Application])
 def ask_which_to_fire(client: OpenAI, employees: list[EmployeeAgent]) -> EmployeeAgent:
     employees_list = "; ".join(f"#{e.unique_id} ({round(e.productivity, 1)}, {int(e.current_salary)})" for e in employees)
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=MODEL,
         messages=[
             {"role": "system", "content": HR_CHOOSE_PROMPT},
             {"role": "user", "content": f"{LIST_WORKER_PROMPT}: {employees_list}"},
