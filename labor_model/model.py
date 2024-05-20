@@ -36,6 +36,9 @@ class LaborModel(mesa.Model):
         settings: Settings,
         llm_based: bool = False,
         open_ai_client: OpenAI | None = None,
+        quitting_multiplier: float | None = None,
+        product_cost: int | None = None,
+        initial_employment_rate: float | None = None,
     ):
         # https://www.payscale.com/content/report/2024-compensation-best-practice-report.pdf
         # 3% is the average base pay increase predicted for 2024
@@ -49,14 +52,24 @@ class LaborModel(mesa.Model):
 
         self.llm_based = llm_based
 
-        self.product_cost = settings.initial_product_cost
+        if product_cost:
+            self.product_cost = product_cost
+        else:
+            self.product_cost = settings.initial_product_cost
         self.company_operating_cost = settings.base_operating_cost
         self.cost_per_hire = settings.cost_per_hire
         self.initial_salary = settings.initial_salary
         self.changing_jobs_raise = settings.changing_jobs_raise
-        self.quitting_multiplier = settings.quitting_multiplier
+        if quitting_multiplier:
+            self.quitting_multiplier = quitting_multiplier
+        else:
+            self.quitting_multiplier = settings.quitting_multiplier
         self.company_fire_probability = settings.company_fire_probability
         self.company_emergency_months = settings.company_emergency_months
+        if initial_employment_rate:
+            self.initial_employment_rate = initial_employment_rate
+        else:
+            self.initial_employment_rate = settings.initial_employment_rate
 
         self.total_products = (
             num_employees * AVERAGE_PRODUCTIVITY * JOBS_TO_EMPLOYEES_RATIO
@@ -116,7 +129,7 @@ class LaborModel(mesa.Model):
                 )
                 if (
                     current_company_productivity
-                    < settings.initial_employment_rate
+                    < self.initial_employment_rate
                     * current_company.available_sellable_products_count
                     / JOBS_TO_EMPLOYEES_RATIO
                 ):
@@ -184,7 +197,7 @@ class LaborModel(mesa.Model):
             self.agent_id_iter += 1
 
         if self.llm_based:
-            sleep(0.1)
+            sleep(1)
 
     # [AVERAGE_PRODUCTIVITY - 1, AVERAGE_PRODUCTIVITY + 1]
     def _generate_employee_productivity_ratio(self) -> float:
