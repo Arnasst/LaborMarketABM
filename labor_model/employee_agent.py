@@ -145,13 +145,13 @@ class EmployeeAgent(mesa.Agent):
             possible_steps = self.model.grid.get_neighborhood(
                 employer.pos, moore=True, include_center=False, radius=1
             )
-            if self.pos not in possible_steps:
+            more_steps = self.model.grid.get_neighborhood(
+                employer.pos, moore=True, include_center=False, radius=2)
+            if self.pos not in possible_steps and self.pos not in more_steps:
                 for position in possible_steps:
                     if self.model.grid.is_cell_empty(position):
                         self.model.grid.move_agent(self, position)
                         return
-                more_steps = self.model.grid.get_neighborhood(
-                    employer.pos, moore=True, include_center=False, radius=2)
                 for position in more_steps:
                     if self.model.grid.is_cell_empty(position):
                         self.model.grid.move_agent(self, position)
