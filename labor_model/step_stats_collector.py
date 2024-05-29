@@ -24,16 +24,25 @@ class StepStatsCollector(DataCollector):
             model_reporters={
                 "Unemployment Rate": lambda m: round(self.calculate_unemployment_rate(), 2),
                 "Average Work Tenure": lambda m: round(self.calculate_average_tenure(), 2),
-                "Average Time Between Jobs": lambda m: round(self.calculate_average_time_between_jobs(), 2),
-                "Average Quit Rate": lambda m: round(self.calculate_average_quit_rate(), 2),
+                # "Average Time Between Jobs": lambda m: round(self.calculate_average_time_between_jobs(), 2),
+                # "Average Quit Rate": lambda m: round(self.calculate_average_quit_rate(), 2),
                 # "Wage Stats": self.calculate_wage_stats,
                 # "Company Funds": self.get_company_funds,
                 # "Total Funds": lambda m: round(sum(self.get_company_funds()), 2),
                 # "Product Fill Rates": lambda m: round(self.get_companies_product_fill_rate(), 2),
                 # "Iterative Profits": self.calculate_profits,
-                "Company Profit Average": self.calculate_average_profits,
-                "Original Companies Left": lambda m: len(list(c for c in self.model.companies if c.unique_id < self.model.num_companies)),
-                "Original Company Profits": lambda m: sum((c.funds - c.starting_funds) / c.starting_funds for c in self.model.companies if c.unique_id < self.model.num_companies),
+                # "Company Profit Average": self.calculate_average_profits,
+                # "Original Companies Left": lambda m: len(list(c for c in self.model.companies if c.unique_id < self.model.num_companies)),
+                # "Original Company Profits": lambda m: sum((c.funds - c.starting_funds) / c.starting_funds for c in self.model.companies if c.unique_id < self.model.num_companies),
+                "Company #0 Funds": lambda m: self.model.companies[0].funds,
+                "Company #1 Funds": lambda m: self.model.companies[1].funds,
+                "Company #2 Funds": lambda m: self.model.companies[2].funds,
+                "Company #3 Funds": lambda m: self.model.companies[3].funds,
+                "Company #4 Funds": lambda m: self.model.companies[4].funds,
+                "Company #5 Funds": lambda m: self.model.companies[5].funds,
+                "Company #6 Funds": lambda m: self.model.companies[6].funds,
+                "Company #7 Funds": lambda m: self.model.companies[7].funds,
+                "Company #8 Funds": lambda m: self.model.companies[8].funds,
             }
         )
         self.model = model
@@ -51,10 +60,13 @@ class StepStatsCollector(DataCollector):
 
     def calculate_average_tenure(self) -> float:
         ended_work_records = [wr for e in self.model.employees for wr in e.work_records if wr.to_time is not None]
+        current_work_records = [wr for e in self.model.employees for wr in e.work_records if wr.to_time is None]
         if len(ended_work_records) == 0:
             return 0
-        lenghts = calculate_work_lengths(ended_work_records)
-        return sum(lenghts) / len(lenghts)
+        ended_lenghts = calculate_work_lengths(ended_work_records)
+        current_lengths = [self.model.schedule.steps - r.from_time for r in current_work_records]
+        average_tenure = (sum(ended_lenghts) + sum(current_lengths)) / (len(ended_lenghts) + len(current_lengths))
+        return average_tenure
 
     def calculate_average_profits(self) -> float:
         return sum((c.funds - c.starting_funds) / c.starting_funds for c in self.model.companies) / len(self.model.companies)

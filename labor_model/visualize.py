@@ -50,16 +50,13 @@ def main():
     grid = mesa.visualization.CanvasGrid(agent_portrayal, 19, 19, 500, 500)
     unemployment_chart = mesa.visualization.ChartModule(
         [{"Label": "Unemployment Rate", "Color": "Black"}],
-        data_collector_name="datacollector", canvas_height=200, canvas_width=500
+        data_collector_name="datacollector", canvas_height=100, canvas_width=250
     )
     time_spent_chart = mesa.visualization.ChartModule(
         [{"Label": "Average Work Tenure", "Color": "Blue"}],
-        data_collector_name="datacollector"
+        data_collector_name="datacollector",
+        # canvas_height=100, canvas_width=250
     )
-    # company_funds_chart = mesa.visualization.ChartModule(
-    #     [{"Label": "Company Funds", "Color": "Red"}],
-    #     data_collector_name="datacollector"
-    # )
     company_funds_chart = mesa.visualization.ChartModule(
         [{"Label": f"Company #{i} Funds", "Color": f"#{i*123456 % 0xFFFFFF:06X}"} for i in range(9)],
         data_collector_name='datacollector'
